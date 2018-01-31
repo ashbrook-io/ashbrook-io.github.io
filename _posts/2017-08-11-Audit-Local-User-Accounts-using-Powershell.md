@@ -5,7 +5,37 @@ title: Audit Local User Accounts Using Powershell
 
 Here are some ways to audit local user accounts using powershell.
 
-{% gist 840230f33e81bdbabd337a498f9ae255 %}
+``` powershell
+#get local accounts from a list of servers
+# get the list, make sure the servers pass a ping check, pull back the account list
+# ignore the errors, we only care about the stuff we *can* reach
+# uses servers.csv file with a Name column as input
+# outputs to accounts.csv
+
+$servers = $null # server list, pulled name and sorted from csv
+$pj = $null # ping job
+$pr = $null # ping results
+$upservers = $null #servers who were pinged successfully
+$aj = $null # account job
+$ar = $null # account results
+$LocalAccounts = $null # local accounts from the machines
+
+$servers = (Import-Csv servers.csv | sort Name | %{ $_.Name } )
+$pj = Test-Connection -ErrorAction SilentlyContinue `
+    -ttl 5 -Count 1  -ComputerName $servers -AsJob
+$null = Wait-Job $pj
+$pr = Receive-Job $pj
+$upservers = ($pr | ? {$_.StatusCode -eq 0} | % {$_.Address}) 
+$aj = Get-WmiObject -ErrorAction SilentlyContinue `
+    -Class Win32_UserAccount -Filter "LocalAccount='$True'" `
+    -ComputerName $upservers -AsJob
+$null = Wait-Job $aj
+$ar = Receive-Job $aj
+$LocalAccounts = ($ar | select Domain,Name,FullName | Format-Table)
+
+#or dump out to csv instead of var
+$ar | select Domain,Name,FullName | Export-Csv -NoTypeInformation -Path accounts.csv
+```
 
 Edit:
 
