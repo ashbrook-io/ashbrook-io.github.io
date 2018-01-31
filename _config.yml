@@ -18,8 +18,8 @@ avatar: https://png.pngtree.com/element_origin_min_pic/17/08/24/943694870e1261b7
 # Includes an icon in the footer for each username you enter
 footer-links:
   dribbble:
-  email: roy@ashbrook.io
-  facebook: royashbrook
+  email: 
+  facebook: 
   flickr:
   github: royashbrook
   instagram:
@@ -27,7 +27,7 @@ footer-links:
   pinterest:
   rss: # just type anything here for a working RSS icon
   twitter: royashbrook
-  stackoverflow: # your stackoverflow profile, e.g. "users/50476/bart-kiers"
+  stackoverflow: users/2074040/roy-ashbrook # your stackoverflow profile, e.g. "users/50476/bart-kiers"
   youtube: # channel/<your_long_string> or user/<user-name>
   googleplus: # anything in your profile username that comes after plus.google.com/
 
