@@ -4,12 +4,13 @@ title: About
 permalink: /about/
 ---
 
-Some information about you!
+Roy Ashbrook
+IT Generalist
 
 ### More Information
 
-A place to include any other types of information that you'd like to include about yourself.
+Best place to get more information on me is linkedin or searching google and reading past posts. =)
 
 ### Contact me
 
-[email@domain.com](mailto:email@domain.com)
+LinkedIn is best.
