@@ -5,7 +5,6 @@ permalink: /about/
 ---
 
 Roy Ashbrook
-IT Generalist
 
 ### More Information
 
