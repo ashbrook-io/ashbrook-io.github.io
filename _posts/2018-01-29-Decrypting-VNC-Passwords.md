@@ -22,5 +22,5 @@ That's it. =) After that I used vncviewer to get into the box and everything was
 
 I was also able to find some github projects, but I don't have gcc on my windows machine, so I just used the tool from above as I found some references to aluigi.org writing this one. I'll include a couple github projects here, however.
 
-https://github.com/jeroennijhof/vncpwd
-https://github.com/trinitronx/vncpasswd.py
+- https://github.com/jeroennijhof/vncpwd
+- https://github.com/trinitronx/vncpasswd.py
