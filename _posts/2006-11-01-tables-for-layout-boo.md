@@ -1,6 +1,6 @@
 ---
 layout: post
-title: tables for layout boo
+title: tables for layout... boo
 ---
 
 this post is re: [this article](http://olav.dk/articles/tables.html).
