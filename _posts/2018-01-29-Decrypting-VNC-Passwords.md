@@ -15,7 +15,7 @@ Answer:
 reg query "\\myserver\hklm\software\ORL\WinVNC3\Default" /v Password
 ```
 
-2. I was able to use this file to decode by just copy/pasting the value from above.
+2. I was able to use [this](http://aluigi.altervista.org/pwdrec/vncpwd.zip) file to decode by just copy/pasting the value from above.
 
 That's it. =) After that I used vncviewer to get into the box and everything was fine.
 
