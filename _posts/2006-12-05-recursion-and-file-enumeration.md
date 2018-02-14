@@ -1,6 +1,6 @@
 ---
 layout: post
-title: parsing eml files with c#
+title: recursion and file enumeration
 ---
 
 Very simple app that just shows how to traverse files and folders. Note that you can also utilize the FileSystemInfo class, however if you do that you have to write your own file filter checking etc. Not that the default is super robust, but it does end up being less code. Just for a change, I short cut the class references with using statements up top =P
