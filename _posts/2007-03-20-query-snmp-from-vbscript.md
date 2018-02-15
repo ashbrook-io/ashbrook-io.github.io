@@ -26,3 +26,7 @@ this method uses the wmi snmp provider. valid values for the class variable belo
 using the wmi cim studio tools available from microsoft for free download, you can find these if you browse to root/snmp/smir and look in snmpmacro/snmpobjecttype
 
 {% gist d8c455444de15819decdd9761603efa0 %}
+
+sample command line syntax:
+
+TestSQL.exe c:\test\t.sql 100 "server=localhost;database=zipcode;integrated security=sspi;Pooling=False;connect timeout=0;" false
