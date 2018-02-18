@@ -1,6 +1,6 @@
 ---
 layout: post
-title: define: Star Schema
+title: Star Schema
 ---
 
 I sent out [this link](http://enterprise.amd.com/Downloads/Bank_Leu_Case_Study_2_en.pdf) to some people just to peruse as an example of someone using SQL2005 as solution stack.
