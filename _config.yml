@@ -23,7 +23,7 @@ description: 01110010 01101111 01111001
 
 # List of links in the navigation bar
 navbar-links
-  Home: "/"
+  Home: "http://ashbrook.io"
   About Me: "aboutme"
   Site:
     - Hosting: "https://pages.github.com/"
