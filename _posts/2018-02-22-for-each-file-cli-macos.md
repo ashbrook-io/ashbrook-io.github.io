@@ -1,6 +1,5 @@
 ---
 layout: post
-published: true
 title: for each file cli macos
 ---
 I had a need to cycle through some files to convert the encoding today. Had to lookup how to do this from the cli/terminal on a mac.
