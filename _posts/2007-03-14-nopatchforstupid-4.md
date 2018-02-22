@@ -5,11 +5,15 @@ title: nopatchforstupid #4
 
 ## stupid
 
+``` SQL
 select f1 from t where ltrim(rtrim(f2)) != ''
+```
 
 ## not stupid
 
+``` SQL
 select f1 from t where ltrim(f2) != ''
+```
 
 ## why?
 

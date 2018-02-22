@@ -5,13 +5,17 @@ title: passing csv to sql is bad mm'kay
 
 passing csv to a stored proc is bad m'kay. it leaves you open to sql injection attacks and in general isn't the best practice anyway. i'm going to avoid entire code samples just because it's too much typing, but let's take a sample proc and assume you are passing in a varchar(1000) (@csv) comma delimited string. you could do something like this:
 
+``` SQL
 declare sql varchar(2000)
 set sql = 'select * from table where id in (' + @csv + ')'
 sp_executesql @sql
+```
 
 obviously this will work fine if you pass in 1,2,3,4 into your list. but what if some bad person sends you 1,2,3,4,null);select * from users; or something more fun. yep, bad. so what can we do? xml my friend. let's change our input parameter to a type of xml and name it @xml. let's say our xml must be in the format and you can have as many r records as you want. in fact, they can be any kind of record for this following query as long as they have an id attribute.
 
+``` SQL
 select * from table t join @xml.nodes('/root/*') x(n) on n.value('@id','int') = t.id
+```
 
 yep, same thing. you can do this a little differently using openxml, but that's old news and you can look that up. (via don't feed the penguins)
 
