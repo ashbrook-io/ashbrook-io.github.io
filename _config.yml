@@ -22,7 +22,7 @@ description: 01110010 01101111 01111001
 # --- Navigation bar options --- #
 
 # List of links in the navigation bar
-navbar-links
+navbar-links:
   Home: "http://ashbrook.io"
   About Me: "aboutme"
   Site:
