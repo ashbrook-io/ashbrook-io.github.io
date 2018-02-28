@@ -1,6 +1,6 @@
 ---
 layout: post
-published: false
+published: true
 title: How to deal with CSV with no header row
 date: '2018-02-28'
 ---
