@@ -1,8 +1,8 @@
 ---
 layout: post
-published: false
+published: true
 title: select object with max value in powershell
-date: '2018-02-29'
+date: '2018-03-01'
 ---
 Today I was working on a powershell script that batch sends out some files. The files are generated in blocks of n records depending on what is new. so sometimes there are 1 and sometimes there maybe be 10. The files names are formatted like `{0:yyyyMMddHHmmss}_export_{1}.txt` but they are produced sequentially so the create/write times may not be the same.
 
