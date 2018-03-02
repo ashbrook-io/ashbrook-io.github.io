@@ -1,7 +1,7 @@
 ---
 layout: post
-published: false
-title: ConvertFrom-CSV header weirdness
+published: true
+title: ConvertFrom-CSV header weirdness parsing IISLogs with Powershell
 ---
 So, today I was parsing a bunch of IIS logs. Simple process, no? 
 
