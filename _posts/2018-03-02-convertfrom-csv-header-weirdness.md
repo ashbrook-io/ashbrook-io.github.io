@@ -137,3 +137,12 @@ Length           Property              int Length {get;}
 ```
 
 Looks like a string to me.... hmmm.
+
+Let's try making *sure*, _sure_ it is a string. I'll skip some extra troubleshooting and just show you what did finally work:
+
+```powershell
+PS C:\me> $h = (gc .\ex180302.log -TotalCount 4  | Select -First 1 -Skip 3) -replace "#Fields: " | out-string
+PS C:\me gc .\ex180302.log | ConvertFrom-Csv -Delimiter " " -Header $h.split(" ") | select -first 10 | ft *
+```
+
+So what gives? 
