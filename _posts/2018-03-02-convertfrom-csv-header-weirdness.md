@@ -145,4 +145,42 @@ PS C:\me> $h = (gc .\ex180302.log -TotalCount 4  | Select -First 1 -Skip 3) -rep
 PS C:\me gc .\ex180302.log | ConvertFrom-Csv -Delimiter " " -Header $h.split(" ") | select -first 10 | ft *
 ```
 
-So what gives? 
+So what gives? I dunno. Maybe there is something funny with the characters in the header line? I wouldn't think so because it is just a basic IIS log, but who knows.
+
+```powershell
+PS C:\pod\git\mur-inv> [char[]]$h | %{"Char:{0},Number:{1}" -f $_,[int][char]$_}
+Char:d,Number:100
+Char:a,Number:97
+Char:t,Number:116
+Char:e,Number:101
+Char: ,Number:32
+
+## snipped...
+
+Char:-,Number:45
+Char:s,Number:115
+Char:t,Number:116
+Char:a,Number:97
+Char:t,Number:116
+Char:u,Number:117
+Char:s,Number:115
+Char: ,Number:32
+,Number:13
+Char:
+,Number:10
+```
+
+So, there are some characters we don't really want in there. I would think/hope that powershell would fix them automatically somewhere, but doesn't look like it. So while the previous item I mentioned did _work_, it did not actually work right. If you run it on a log you'll see the header rows are actually spaced incorrect. This seems to be due to the char 13 and 10 at the end of the line. So this line actually worked fine to set the headers `gc .\ex180302.log | ConvertFrom-Csv -Delimiter " " -Header ($h.split(' ') | ?{$_.trim().length -ne 0}) | select -first 10 | ft *`
+
+Of course there are several ways to format the commands. But this was my actual final used code:
+
+```powershell
+$l = "*.log"
+$h = (gc (gci $l | select -f 1) -total 4)[3] -replace '#Fields: ' -split ' ' | ?{$_.trim().length -ne 0}
+$d = Import-Csv (gci "ex1803*.log") -Delimiter ' ' -Header $h | ?{$_.date -notmatch "#"}
+$d | group date, cs-uri-stem | select Count, Name | sort count -Descending
+$d | group date, c-ip | select Count, Name | sort count -Descending
+$d | Out-GridView
+```
+
+Unlike ConvertFrom-CSV, Import-CSV does not discard lines with a # in front, so you have to filter them out. In my case, i was just looking for something to see unique counts by uri,date, and clientip. Basically who is calling what and how frequently. =) Also, dump it out to the gridview to look through while I am doing this.
