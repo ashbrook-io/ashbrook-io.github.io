@@ -77,7 +77,7 @@ REMARKS
 OK, so it needs to be a string array. I can see data in the $h. I figure maybe $h is not a string array or something?
 
 ```powershell
-PS C:\pod\git\mur-inv> $h |gm
+PS C:\me> $h |gm
 
 
    TypeName: System.String
@@ -148,7 +148,7 @@ PS C:\me gc .\ex180302.log | ConvertFrom-Csv -Delimiter " " -Header $h.split(" "
 So what gives? I dunno. Maybe there is something funny with the characters in the header line? I wouldn't think so because it is just a basic IIS log, but who knows.
 
 ```powershell
-PS C:\pod\git\mur-inv> [char[]]$h | %{"Char:{0},Number:{1}" -f $_,[int][char]$_}
+PS C:\me> [char[]]$h | %{"Char:{0},Number:{1}" -f $_,[int][char]$_}
 Char:d,Number:100
 Char:a,Number:97
 Char:t,Number:116
