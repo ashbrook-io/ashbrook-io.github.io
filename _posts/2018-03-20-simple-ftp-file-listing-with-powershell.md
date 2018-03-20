@@ -1,12 +1,12 @@
 ---
 layout: post
-published: false
+published: true
 title: Simple FTP File Listing with PowerShell
 ---
-Had a need to do this recently. I just needed to get a file list from one directory.
+Had a need to do this recently. I just needed to get a file list from one directory. You can actually just use a networkcredential here, but I use the credential myself later and I need a pscredential object.
 
-``` ps
-#credentials
+``` powershell
+# credentials
 $uri = New-Object System.Uri("ftp://ftp.whatever.com/path/")
 $u = "username"
 $p = "password"
