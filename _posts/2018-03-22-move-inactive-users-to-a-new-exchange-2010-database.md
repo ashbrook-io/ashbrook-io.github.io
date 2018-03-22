@@ -7,6 +7,8 @@ image: 'https://sd.keepcalm-o-matic.co.uk/i/user-inactive-please-carry-on.png'
 ---
 ## Archiving inactive users to another database
 
+![child on couch reading an magazine titled inactivity](https://s3.amazonaws.com/lowres.cartoonstock.com/children-children-childhood-fat-lazy-computer-cgon637_low.jpg)
+
 I am not an 'Exchange Guy' but we are working to migrate to O365 and so just limping along our existing infrastructure. We do need to make some space in some existing databases, so we are wanting to shuffle some of the 'inactive' users to another database on a different drive. So here are the steps to create the database and move a bunch of the users. _note: I am using Exchange 2010 SP3_
 
 ``` powershell
