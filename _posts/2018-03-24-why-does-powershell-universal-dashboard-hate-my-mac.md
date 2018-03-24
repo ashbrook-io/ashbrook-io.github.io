@@ -9,7 +9,7 @@ image: 'https://d30y9cdsu7xlg0.cloudfront.net/png/140281-200.png'
 ---
 So recently I was looking for dashboarding _things_ and powershell _things_ at the same time, and I came across a tool called [PowerShell Universal Dashboard](https://www.gitbook.com/book/adamdriscoll/powershell-universal-dashboard/details). You can follow that link or search around to get some info on it. It is a pretty slick dashboarding tool. I think especially nice for some dashboard prototyping if you are into powershell.
 
-The tool was slick and fun to play with, but when I went to load it on my MAC, I got something like the following error.
+The tool was slick and fun to play with, but when I went to load it on my Mac, I got something like the following error:
 
 ```powershell
 Exception while loading assembly Microsoft.Extensions.Logging.Filter:
@@ -22,7 +22,7 @@ File name: '/Users/royashbrook/.local/share/powershell/Modules/UniversalDashboar
    at PowerShellProTools.UniversalDashboard.Server.OnAssemblyResolve(AssemblyLoadContext assemblyLoadContext, AssemblyName assemblyName) in D:\a\1\s\PowerShellProTools.UniversalDashboard\Server\Server.cs:line 177
 ```
 
-So after some fiddling, I found that the module simply did not include the referenced file above. The really weird thing is that the package for this *was* installed on my machine. Here's a snip:
+So after some fiddling, I found that the module simply did not include the referenced file above. I should say lots of fiddling that did not really need to happen since the problem is stated pretty clearly in the error message. It can't find the file! The really weird thing is that the package for this *was* installed on my machine. Here's a snip:
 
 ```powershell
 PS /Users/royashbrook/.local/share/powershell/Modules/UniversalDashboard/1.5.0> Get-Package | where name -like "*filter*" | fl *                                                                          
@@ -40,7 +40,7 @@ PackageFilename            : Microsoft.Extensions.Logging.Filter.1.1.2.nupkg
 FromTrustedSource          : True
 ```
 
-So I didn't go digging around in the server.cs to figure out exactly why, but I'm guessing this is just a missing file. The odd thing is it is missing on my windows PC but it works there just fine. Maybe on PC these things are loaded into the GAC and the assembly resolution looks there but it won't do that on a Mac.
+So I didn't go digging around in the server.cs to figure out exactly why, but I'm guessing this is just a missing file. The odd thing is it is also missing on my windows PC but it works there just fine. Maybe on PC these things are loaded into the GAC and the assembly resolution looks there but it won't do that on a Mac.
 
 Regardless, I didn't really worry about this much as I didn't mind just running it on my PC. But I happened to visit a friend and we were discussing it and he *also* had a Mac and we ran into the same problem. Long story short, you can just copy the file that is missing.
 
