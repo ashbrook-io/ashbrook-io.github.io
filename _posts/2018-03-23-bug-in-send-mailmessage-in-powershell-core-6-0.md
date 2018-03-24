@@ -32,6 +32,13 @@ Here's a simple way to repro. I have these three files, a config.xml with some m
 
 {% gist 3353edb7ce8f9e739ab9d0757118a201 dockerfile %}
 
+If you save these in a folder you can run job.ps1 to see the results yourself (if you are on a mac or linux) or you can see it in docker. I ran this:
+
+```powershell
+docker build -t smmbug .
+docker run -it smmbug
+```
+
 Here is the docker hub location for microsoft/powershell. 
 
 https://hub.docker.com/r/microsoft/powershell/
