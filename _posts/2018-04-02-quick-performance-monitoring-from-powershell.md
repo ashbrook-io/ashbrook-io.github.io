@@ -7,8 +7,11 @@ subtitle: but why tho
 ---
 If, you wanted to take a quick peak, using powershell, on some performance metric and show it in write-progress, here's how you would do it.
 
+"But why?" I hear you saying. "Can't I just do that in perfmon or any other tool made for this?"
+
 ![why?](https://static3.fjcdn.com/comments/But+why+tho+_e036e04ca4d759b2a2c28302c03d1c8d.jpg)
-"But why?" I hear you saying. "Can't I just do that in perfmon or any other tool made for this?" Well, sure, but where's the fun in that. =)
+
+Well, sure, but where's the fun in that. =)
 
 {% gist ddefc527ba3f403473360beefe5288f0 %}
 
