@@ -118,7 +118,7 @@ google_analytics: "UA-1136410-5"
 
 # --- Misc --- #
 # Fill in your Disqus shortname (NOT the userid) if you want to support Disqus comments
-#disqus: "ashbrook-io"
+disqus: "ashbrook-io"
 
 # Facebook App ID
 # fb_app_id: ""
