@@ -1,7 +1,9 @@
 ---
 layout: post
-published: false
+published: true
 title: Queue up or pre-download windows updates with powershell
+image: 'http://i0.kym-cdn.com/photos/images/original/001/099/563/d1d.png'
+subtitle: How did we get here?
 ---
 I hope no one reading this ever actually has to do this. In my case, I have some old'ish servers that have very limited downtime windows. While I was updating these I noticed that a lot of them still did not actually 'download' the updates even though they were set to download and install later.
 
@@ -55,3 +57,9 @@ $results = icm -sc $sb
 (Get-History)[-1]|fl *
 $results | %{ [pscustomobject] @{title = $_.item.Title;resultcode= $_.result.resultcode} }
  ```
+
+Generally, I think I would always prefer to let windows update do it's own thing, but this was a sort of a special circumstance because we could not hit the 'install' button (which would download and install things) but we could download items before the 'change window' came into play.
+
+Also, if you want to see the status of the updates (although it's not terribly easy to read) you can check out the windowsupdate.log file like this `gc \\server\c$\windows\windowsupdate.log -tail 10 -wait` or some other similar `tail` type command. The log is in %windir%, but I was looking at a remote machine so I put in the path.
+
+[source](https://support.microsoft.com/en-us/help/902093/how-to-read-the-windowsupdate-log-file)
