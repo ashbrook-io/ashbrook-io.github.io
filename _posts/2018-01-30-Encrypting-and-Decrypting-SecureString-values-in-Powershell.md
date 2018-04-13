@@ -2,6 +2,7 @@
 layout: post
 title: Encrypting and Decrypting SecureString values in Powershell
 published: true
+image: 'https://d30y9cdsu7xlg0.cloudfront.net/png/823-200.png'
 ---
 
 Here are some ways to encrypt and decrypt a securestring using powershell
