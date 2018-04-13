@@ -40,3 +40,12 @@ vim-cmd vimsvc/task_info haTask-12345-vim.VirtualMachine.removeAllSnapshots-1212
 ```
 
 In my case, the simple solution was just to wait. It took us about 20'ish hours to consolidate ~700GB of delta files.
+
+Prior to finding out some of the information above, I used [this](https://kb.vmware.com/s/article/1007566) article to just watch the files and see that they were growing. In that case, I just did this:
+
+```sh
+cd /vmfs/volumes/Datastore_name/Virtual_Machine_name/
+watch -d 'ls -luth | grep -E "delta|flat|sesparse"'
+```
+
+You should know the datastore name and the virtual machine already, I would imagine to start this like I did.
