@@ -19,7 +19,7 @@ So in a simple example site structure we would see:
 
 And then on page1.md, to show these files, I did something like this:
 
-{% gist a4ddefc439e578792dceecae59bc0234 page1.md %}
+{% gist a4ddefc439e578792dceecae59bc0234 page1.txt %}
 
 And this would generate a list of links to the individual pages. You can also filter based on the t0/1 document type if you want to assign with another filter and you can chop up the name however you like or using whatever format you like. I am just using three fields, splitting on `'-'` and leaving off the 'type' code that I put on the end with t0/1 in this example.
 
