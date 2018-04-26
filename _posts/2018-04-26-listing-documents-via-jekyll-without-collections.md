@@ -14,32 +14,12 @@ You can also just publish straight up html files and it will work the same way. 
 This worked really well for us, however we had one issue where we needed to publish lists of pdf documents, but I wanted to have the lists generated automatically. These documents had some meta data, but I didn't want to have to maintain a [collection](https://jekyllrb.com/docs/collections/) to be updated or use some other data structure. The goal was for me to be able to hand off the 'updating' of the site to someone else and make it very simple. So I wanted to just use the file names to hold the metadata. I decided on a format something like `DATE-TITLE-TYPE.pdf` for my first process. And to keep the different documents for different pages away from each other, I put them into different sub folders in assets. The mechanism for getting at these files without any other data structure is to use [site.static_files](https://jekyllrb.com/docs/static-files/) which is already available to us.
 
 So in a simple example site structure we would see:
-```
-/
---/assets
-----/page1
-------20180101-Some Document Title-t0.pdf
-------20180102-Some Document Title-t0.pdf
-------20180104-Some Document Title-t1.pdf
-page1.md
-```
+
+{% gist a4ddefc439e578792dceecae59bc0234 dir.txt %}
 
 And then on page1.md, to show these files, I did something like this:
 
-```
----
-title: page1
----
-
-# {{page.title}}
-
-{% assign fs = site.static_files | where_exp: "f","f.path contains 'page1'" %}
-{% for f in fs %}
-{% assign g = f.basename | split: '-' %}
-- [{{g[1]}}]({{ f.path }})
-{% endfor %}
-
-```
+{% gist a4ddefc439e578792dceecae59bc0234 page1.md %}
 
 And this would generate a list of links to the individual pages. You can also filter based on the t0/1 document type if you want to assign with another filter and you can chop up the name however you like or using whatever format you like. I am just using three fields, splitting on `'-'` and leaving off the 'type' code that I put on the end with t0/1 in this example.
 
