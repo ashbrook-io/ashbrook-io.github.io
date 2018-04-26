@@ -16,17 +16,17 @@ This worked really well for us, however we had one issue where we needed to publ
 So in a simple example, my site structure looked like this:
 ```
 /
-	/assets
-		/page1
-        	20180101-Some Document Title-t0.pdf
-            20180102-Some Document Title-t0.pdf
-            20180104-Some Document Title-t1.pdf
+--/assets
+----/page1
+------20180101-Some Document Title-t0.pdf
+------20180102-Some Document Title-t0.pdf
+------20180104-Some Document Title-t1.pdf
 page1.md
 ```
 
 And then on page1.md, to show these files, I did something like this:
 
-``` markdown
+```
 ---
 title: page1
 ---
