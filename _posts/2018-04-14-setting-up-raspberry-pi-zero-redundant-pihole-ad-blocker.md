@@ -2,8 +2,7 @@
 layout: post
 published: true
 title: Setting up Raspberry Pi Zero redundant PiHole Ad Blocker
-image: >-
-  https://mycyberuniverse.com/images/articles/detect-ad-blocker-show-message/thumbnail.png
+image: 'https://upload.wikimedia.org/wikipedia/commons/e/eb/Adblock_logo.png'
 subtitle: Block Ads on your Network
 ---
 I am a big fan of [pihole](https://pi-hole.net/). I had used it a little bit off and on for a couple of years a while back, and finally implemented it as a permanent part of my home network a couple of years ago. I've been a happy camper ever since.
