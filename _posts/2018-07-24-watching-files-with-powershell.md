@@ -3,7 +3,7 @@ layout: post
 published: true
 title: Watching Files with Powershell
 image: 'https://pbs.twimg.com/profile_images/417361759734079488/z2cpGEgT.jpeg'
-date: '2018-01-24'
+date: '2018-07-24'
 subtitle: 'Uatu, the powershell script'
 ---
 ![uatu](https://www.cheatsheet.com/wp-content/uploads/2016/09/The-Watcher-Marvel-Comics.jpg)
