@@ -38,3 +38,6 @@ measure-command { a G:\20181120-Test\db6.bak Y:\20181120-Test\db6.bak.gz 8192 }
 measure-command { a G:\20181120-Test\db7.bak Y:\20181120-Test\db7.bak.gz 8192 }
 measure-command { a G:\20181120-Test\db8.bak Y:\20181120-Test\db8.bak.gz 8192 }
 ```
+
+Here's a picture of a fancy zipper. =)
+![Fanzy Zipper]({{site.baseurl}}/img/Article_Innovations_Zip-necklace_U-B2.jpg)
