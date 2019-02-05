@@ -2,7 +2,7 @@
 layout: post
 published: true
 title: Queue up or pre-download windows updates with powershell
-image: 'http://i0.kym-cdn.com/photos/images/original/001/099/563/d1d.png'
+image: 'https://cdn.drawception.com/drawings/VHhbdnH51a.png'
 subtitle: How did we get here?
 ---
 I hope no one reading this ever actually has to do this. In my case, I have some old'ish servers that have very limited downtime windows. While I was updating these I noticed that a lot of them still did not actually 'download' the updates even though they were set to download and install later.
