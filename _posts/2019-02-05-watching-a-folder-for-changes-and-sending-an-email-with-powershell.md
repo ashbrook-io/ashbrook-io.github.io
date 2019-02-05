@@ -25,7 +25,7 @@ Note that these aren't 'industrial strength' modules or anything, just fairly ut
 
 Bonus: another item I sometimes need to do is just see the traffic that is coming in on a particular site or for a particular user or something. I generally just do something like the below for this:
 
-``` ps1
+```powershell
 # get the most recent log file from server
 $f = (gci 'unc path to iis logs' | sort lastwritetime -desc |select -first 1)
 
