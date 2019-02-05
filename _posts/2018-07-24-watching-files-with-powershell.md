@@ -10,6 +10,6 @@ I needed to watch a folder to see when files were created. I also decided to che
 
 Sometimes, you just need to watch things. With powershell this is pretty easy.
 
-{% gist bf8419a82dbc6de5c4a7b160256d446b %}
+{% gist bf8419a82dbc6de5c4a7b160256d446b filewatcher.ps1 %}
 
 ![uatu](https://www.cheatsheet.com/wp-content/uploads/2016/09/The-Watcher-Marvel-Comics.jpg)
