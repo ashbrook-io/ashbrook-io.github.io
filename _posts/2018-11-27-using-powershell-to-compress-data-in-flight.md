@@ -4,7 +4,7 @@ published: true
 title: Using powershell to compress data in flight
 subtitle: 'Why don''t we buy a bigger internet circuit, again?'
 date: '2018-11-27'
-image: img/bunsquish_1024x1024.jpg
+image: /img/bunsquish_1024x1024.jpg
 ---
 I have a situation where I need to copy some data over a WAN link. This is a MS SQL backup that needs to be restored at a remote location when we relocate a system. We generally can get ~8-10MB/s while copying the files and the database backup is 300+GB so this takes a long time. Bandwidth is our choke point, so in an attempt to reduce the amount of data sent over the wire, I wanted to stream the files and compress them in-flight.
 
