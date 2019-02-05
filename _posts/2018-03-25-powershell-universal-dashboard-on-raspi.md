@@ -3,7 +3,7 @@ layout: post
 published: true
 title: Powershell Universal Dashboard on RasPi
 image: >-
-  http://3.bp.blogspot.com/_IpV86ZyXqlA/Swotc0djuDI/AAAAAAAABIE/QSFVhmYh8Ug/s400/spongebob-1.jpg
+  https://3.bp.blogspot.com/_IpV86ZyXqlA/Swotc0djuDI/AAAAAAAABIE/QSFVhmYh8Ug/s400/spongebob-1.jpg
 subtitle: The Ultimate Universal Excitement!!!
 ---
 https://poshtools.com/powershell-universal-dashboard/
