@@ -4,7 +4,8 @@ published: true
 title: Watching a folder for changes and sending an email with powershell
 subtitle: Who watches the watcher?
 date: '2019-02-05'
-image: 'http://szzljy.com/data/16/watcher-marvel-comics/watcher-marvel-comics-12.jpg'
+image: >-
+  https://vignette.wikia.nocookie.net/marveldatabase/images/3/3a/Uatu_%28Earth-616%29_from_Original_Sin_Vol_1_1_001.jpg/revision/latest/scale-to-width-down/267?cb=20140507202821
 ---
 I [previously wrote]({{site.baseurl}}/2018-07-24-watching-files-with-powershell/) about watchintg a folder for changes and displaying some information on those changes. This was primarily used for some live monitoring of a file mover that was being sunset.
 
