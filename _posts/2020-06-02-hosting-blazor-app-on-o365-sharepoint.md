@@ -1,6 +1,6 @@
 ---
 layout: post
-published: false
+published: true
 title: Hosting Blazor App on O365 Sharepoint
 date: '2020-06-02'
 subtitle: I said what I said
