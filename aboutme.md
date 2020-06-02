@@ -17,4 +17,4 @@ To be honest, I'm having some trouble remembering right now, so why don't you ju
 
 ### Don't get it?
 
-Sorry if you don't get the above. It came with the template. I liked it, so I left it. You can just search for Roy Ashbrook SQL on google if you want to find more stuff I have posted over the years. I've written about more than SQL but that will probably produce the largest set of stuff. You can also always hit up [linkedin](http://www.linkedin.com/in/royashbrook) for the latest updates I have put out there. I hope something on this site helped you. =)
+Sorry if you don't get the above. It came with the template. I liked it, so I left it. You can just search for Roy Ashbrook SQL on google if you want to find more stuff I have posted over the years. I've written about more than SQL but that will probably produce the largest set of stuff. You can also always hit up [linkedin](https://www.linkedin.com/in/royashbrook/) for the latest updates I have put out there. I hope something on this site helped you. =)
