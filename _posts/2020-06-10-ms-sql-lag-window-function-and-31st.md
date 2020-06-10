@@ -7,7 +7,7 @@ date: '2020-06-10'
 image: >-
   https://png.pngtree.com/png-clipart/20190630/original/pngtree-march-31st-date-on-a-single-day-calendar-png-image_4153496.jpg
 ---
-> I will use some dummy tables for this topic and post something to generate some test data as well as well as the full SQL down at the bottom. For now it's important to know this will involve a table I'll name @SalesByDay with two fields named SalesDate and TotalSales. This table has Sales totals by day and has a date in the SalesDate field and the total sales for that day in TotalSales.
+> I will use some dummy tables for this topic. I'll post something to generate some test data and the full SQL down at the bottom. For now it's important to know this will involve a table I'll name @SalesByDay with two fields named SalesDate and TotalSales. This table has Sales totals by day and has a date in the SalesDate field and the total sales for that day in TotalSales.
 
 ## Can we see last month's numbers?
 
