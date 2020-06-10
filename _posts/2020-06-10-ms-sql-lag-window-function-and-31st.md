@@ -1,6 +1,6 @@
 ---
 layout: post
-published: false
+published: true
 title: MS-SQL LAG window function and 31st
 subtitle: All 30 day months!
 date: '2020-06-10'
