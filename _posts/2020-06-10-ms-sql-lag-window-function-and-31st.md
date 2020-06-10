@@ -29,61 +29,65 @@ Spoiler Alert: this is because things are not actually 'OK'.
 
 ## What's wrong?
 
-If you found this page by searching for anything about this problem, you are already familiar with this issue. The problem is that if you are missing a previous day in a month, LAG will simply go back to the actual previous value in that partition. So if you are in May, and you are on the 31st, and you look back to the 'last 31st day value) you will get the value from March. This produced a large spike as we had understandably reduced volume in april, similar to may but not as bad, but no where near as high as in March before all of the changes had really taken effect. So a big spike on the 31st because we have Marches data.
+If you found this page by searching for anything about this problem, you are already familiar with this issue. The problem is that if you are missing a previous day in a month, LAG will simply go back to the actual previous value in that partition. So if you are in May, and you are on the 31st, and you look back to the 'last 31st day value) you will get the value from March. This produced a large spike as we had understandably reduced volume in april, similar to may but not as bad, but no where near as high as in March before all of the changes had really taken effect. So a big spike on the 31st because we have March's data.
 
+Here is a table that shows the SalesDate, the TotalSales. It also has SalesPrev which is using the lag function without any other help, and a 'Fixed' column which shows the correct value. You can see the items in SalesPrev in bold are pulling from the incorrect month. 
 
-|SalesDate              |TotalSales|SalesPrev|actualSalesPrev|
-|-----------------------|----------|---------|---------------|
-|2020-01-29 00:00:00.000|83036.05  |NULL     |NULL           |
-|2020-01-30 00:00:00.000|43137.25  |NULL     |NULL           |
-|2020-01-31 00:00:00.000|52124.10  |NULL     |NULL           |
-|2020-02-29 00:00:00.000|1017.37   |83036.05 |83036.05       |
-|2020-03-29 00:00:00.000|69213.87  |1017.37  |1017.37        |
-|2020-03-30 00:00:00.000|80259.65  |43137.25 |NULL           |
-|2020-03-31 00:00:00.000|86825.51  |52124.10 |NULL           |
-|2020-04-29 00:00:00.000|11277.62  |69213.87 |69213.87       |
-|2020-04-30 00:00:00.000|43474.88  |80259.65 |80259.65       |
-|2020-05-29 00:00:00.000|55417.99  |11277.62 |11277.62       |
-|2020-05-30 00:00:00.000|34638.87  |43474.88 |43474.88       |
-|2020-05-31 00:00:00.000|50828.97  |86825.51 |NULL           |
-|2020-06-29 00:00:00.000|19150.60  |55417.99 |55417.99       |
-|2020-06-30 00:00:00.000|32841.09  |34638.87 |34638.87       |
+|SalesDate |TotalSales|SalesPrev|Fixed   |
+|----------|----------|---------|--------|
+|2020-01-29|341.94    |NULL     |NULL    |
+|2020-01-30|**11924.09**  |NULL     |NULL    |
+|2020-01-31|**46555.22**  |NULL     |NULL    |
+|2020-02-29|6072.08   |341.94   |341.94  |
+|2020-03-29|73459.94  |6072.08  |6072.08 |
+|2020-03-30|50923.97  |**11924.09** |NULL    |
+|2020-03-31|**16432.06**  |**46555.22** |NULL    |
+|2020-04-29|57900.76  |73459.94 |73459.94|
+|2020-04-30|60334.48  |50923.97 |50923.97|
+|2020-05-29|9355.15   |57900.76 |57900.76|
+|2020-05-30|75511.38  |60334.48 |60334.48|
+|2020-05-31|24902.04  |**16432.06** |NULL    |
+|2020-06-29|73352.32  |9355.15  |9355.15 |
+|2020-06-30|38204.15  |75511.38 |75511.38|
 
+This only happens on days where you don't have the same day the previous month, but you *do* have some data in your lag set from a month that has this value. Originally this did not show up for me as I was pulling only the previous month, so I would get null when appropriate. But eventually I added some additional data so we could run some rollup data for previous months as well in other charts and then it popped up.
 
+## OK. So... how to fix?
+
+The fix for me was pretty simple. I just wrapped the lag value in a case statement and made sure the day in question was less than or equal to the last day of the previous month. So if it's the 31st, but the end of the previous month was the 30th, return null. Here's the snip that produced the value above. Note the formatting is just there to pretty up the output from the [csv-markdown-converter](https://www.convertcsv.com/csv-to-markdown.htm) I used above.
 
 ``` sql
-
+select
+	  [SalesDate] = cast(format([SalesDAte],'yyyy-MM-dd') as varchar(10))
+	, [TotalSales]
+	, [SalesPrev] =
+		lag([TotalSales]) over (partition by day([SalesDate]) order by [SalesDate])
+	, [Fixed] =
+		case
+			when day([SalesDate]) <= day(eomonth(dateadd(month,-1,[SalesDate])))
+			then lag([TotalSales]) over (partition by day([SalesDate]) order by [SalesDate])
+		end
+from
+	@SalesByDay
+where
+	day([SalesDate]) in (29,30,31)
+order by
+	SalesDate
 ```
 
-Enter text in [Markdown](http://daringfireball.net/projects/markdown/). Use the toolbar above, or click the **?** button for formatting help.
+## The End
 
-Searched for lag rownumber missing rows sql
-12:45 PM • Details • 
-Logo for Search
-Search
-Searched for sql window function get value from same day last year
-12:19 PM • Details • 
-Logo for Search
-Search
-Searched for window function get value from same day of last month sql
-12:19 PM • Details • 
-Logo for Search
-Search
-Visited 10 SQL tricks that you didn't think were possible - JAXenter
-12:15 PM • Details
+I feel like there is probably a more elegant way to do this. I played with some other ways like skipping a partition and calculating the rows back or doing something based on info in my date table. But this was simpler for me to understand generally and worked perfectly, so I left it at that.
 
-Logo for Search
-Search
-Searched for lag doesn't work for "31" sql
-12:14 PM • Details • 
-Logo for Search
-Search
-Searched for lag doesn't work for "31sts" sql
-12:14 PM • Details • 
-Logo for Search
-Search
-Searched for lag doesn't work for 31sts sql
-12:14 PM • Details • 
-Logo for Search
-Search
-Searched for sql lag partition by how to deal with nulls
+Some items I searched for that didn't help me at all, but maybe it'll help someone find this page:
+- lag rownumber missing rows sql
+- sql window function get value from same day last year
+- window function get value from same day of last month sql
+- lag doesn't work for "31" sql
+- lag doesn't work for "31sts" sql
+- lag doesn't work for 31sts sql
+- sql lag partition by how to deal with nulls
+
+Here is a gist with the example code used here:
+
+{% gist ac059ff0359a23bc5c5227bb7881d90b %}
