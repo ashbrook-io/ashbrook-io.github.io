@@ -2,7 +2,7 @@
 layout: post
 published: true
 title: Listing Documents via Jekyll without collections
-image: 'https://png.icons8.com/ios/1600/easy.png'
+image: 'https://images-na.ssl-images-amazon.com/images/I/61MtgDxU%2BUL._SY355_.png'
 subtitle: >-
   How to avoid configuration files for document meta-data? Just use the file
   names!
