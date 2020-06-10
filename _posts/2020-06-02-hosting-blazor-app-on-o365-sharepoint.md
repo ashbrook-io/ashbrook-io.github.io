@@ -5,7 +5,7 @@ title: Hosting Blazor App on O365 Sharepoint
 date: '2020-06-02'
 subtitle: I said what I said
 image: >-
-  https://lh3.googleusercontent.com/proxy/EGIpudeeOqF_vjh8HwKjVpAoKKWlg1TjNbvxwGR171md71erZ4ENWt7NGoTZetSB9iIWOiQZV-7TvqgYLNtW0vVdnpYkT96N5sFfbMdcFMNuph1ee4lIyZypGa9M4g
+  https://lh3.googleusercontent.com/proxy/WlKvbcxtLWDTXWDF_DV5E_354rfMvvMAIOIV1TwIWMmmmNH5B972VRQqZPJ17uR1M-7X5VCALgU8_H7V9E4ecaPT6Vr9Qwe4WQt-SyMuLuoO0hzjAHALAbe5vgQ
 ---
 > I probably have a larger article to write on hosting static sites on o365, especially with respect to SPA style things. But for now I'll just make a note of this particular item here so I don't forget or if anyone else is looking for this, they can find it. TLDR; don't do this, at least right now.
 
@@ -28,4 +28,3 @@ So, first I'll say I did not go all the way through with getting this fully setu
 After all this, I could finally check what the download experience was like and how heavy the framework was. Just looking at the files in the build output, you can see at least like 10MB. If I left the dependencies in there (omitting that build flag) it was about double that. I also tried compiling it for linux and a couple of other ways and only was able to tighten it up to about 9MB. Now I could **probably** get this down further, but the goal was to gain time. My current payload is pretty tiny as I'm just using some light js libaries for some utility and charting and the usual bootcamp/jquery type of things. My usual payload is about 500k for any and all dependencies. So while this is maybe cool if I am going to switch to a server side setup in the future (which only sends the pieces of the framework you need) right now having to send the whole thing down just makes the app way too fat for me. If I was building a much richer app, then it might be different. But for now the real, and already existing, benefits of ease of securing things in o365 sharepoint and the free nature of hosting a kind of custom interface for our users with a very tiny size far outweighs any potential benefits from a tool like this.
 
 But you never know unless you give it a shot. =)
-
