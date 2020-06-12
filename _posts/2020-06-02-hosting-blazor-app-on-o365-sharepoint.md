@@ -4,8 +4,7 @@ published: true
 title: Hosting Blazor App on O365 Sharepoint
 date: '2020-06-02'
 subtitle: I said what I said
-image: >-
-  https://lh3.googleusercontent.com/proxy/WlKvbcxtLWDTXWDF_DV5E_354rfMvvMAIOIV1TwIWMmmmNH5B972VRQqZPJ17uR1M-7X5VCALgU8_H7V9E4ecaPT6Vr9Qwe4WQt-SyMuLuoO0hzjAHALAbe5vgQ
+image: /img/don't.png
 ---
 > I probably have a larger article to write on hosting static sites on o365, especially with respect to SPA style things. But for now I'll just make a note of this particular item here so I don't forget or if anyone else is looking for this, they can find it. TLDR; don't do this, at least right now.
 
