@@ -6,11 +6,7 @@ image: /img/azuredevops.png
 subtitle: 'so easy, even i can do it!'
 date: '20200615'
 ---
-## The Situation
-
 I have a lot of projects in azure devops. I started with a handful, but I started by storing each of the customer integrations and other _semi-related_ things into their own projects. Why? Well, largely it is only me generating and maintaining all of this code. However it has recently become a bit unwieldy as I approach 100 projects. Since about 70 of these are *very similar* automation jobs, and quite a few other jobs are related, I decided it was time to cleanup. Fortunately, while I do have some other folks accessing devops for project management purposes, I don't have a lot of pushback when I need to change things like this as long as some guidance is provided. So, for me, this meant I could just mirror the repos I wanted to keep, leave the rest behind, and archive/rename the org itself until I was ready to delete it. I am using git on azure devops.
-
-## The Solution
 
 There were a few other articles online I used, but mostly [this one](https://help.github.com/en/github/creating-cloning-and-archiving-repositories/duplicating-a-repository) covered most things.
 
