@@ -75,13 +75,9 @@ $results = $agentinfo | %{ iwr $apiuri -method post -headers $header -body (@{"u
 # yourself, or, in my case, just print the unique browsers like so...
 ($results.content | convertfrom-json).parse | select -unique simple_software_string
 
-
-
-
-
-
-
+# also probably a good idea to save the parse to a file at least so you
+# can review it later if you need to
+($results.content | convertfrom-json).parse | convertto-json > results.json
 ```
 
-
-
+That's it. This got me what I needed personally so if you found this, I hope it works for you. I am not 100% sure if the `$results` object will end up having the same order **for sure** as the originally ordered hash, but you could write it all out to a file as you get the parse responses, or you could key it or return the results from iwr as you iterate over it or something else. This got me where I needed to go so I left it there.
