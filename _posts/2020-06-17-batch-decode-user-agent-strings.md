@@ -36,6 +36,15 @@ $agentinfo = $data | # filter our agent info out of our log data
 
 So now I have my agents. I found plenty of places online where I could copy/paste in the agent string and get the info I wanted. But as I may have to do this for some other websites, I wanted to get something a little bit more reliable and repeatable than that. One of the sites I used to copy/paste while checking was (this one)[whatismybrowser.com] and it also happens they have a free tier for an api that allows a limited number of queries. Since I really only need a very limited number of on demand runs of this, that works for me. So for the next part you'll need an api key from there so you can send a request in to get the info you may want. In my case, I'm really just looking for something like 'IE11 on Windows' or 'Chrome 70' or similar. I hadn't decided __exactly__ what I wanted to see, but definitely not the agent string itself. =)
 
+Note:
+- (Documentation for API)[https://developers.whatismybrowser.com/api/docs/v2/integration-guide/]
+- I am using the "User Agent Parse Batch" because I want this data back in a single request
+
 So this is what I did next:
+
+``` PowerShell
+
+```
+
 
 
