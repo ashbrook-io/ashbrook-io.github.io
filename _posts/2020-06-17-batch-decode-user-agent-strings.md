@@ -38,7 +38,8 @@ So now I have my agents. I found plenty of places online where I could copy/past
 
 Note:
 - (Documentation for API)[https://developers.whatismybrowser.com/api/docs/v2/integration-guide/]
-- I am using the "User Agent Parse Batch" because I want this data back in a single request
+- I am using the "User Agent Parse" because you don't seem to get batch access with the free plan
+- I'll be getting the full parse results back, but i'm really looking for the 'simple' name
 
 So this is what I did next:
 
@@ -53,10 +54,27 @@ So this is what I did next:
 $ln=1; 
 $hash=[ordered]@{};
 $agentinfo | %{ $hash.add("$ln",$_.Name);$ln++};
-$json = @{"user_agents"=$hash} | convertto-json
 
-# now we have something that looks just like their example json string
-# you can check their page linked up above for a sample.
+# now we have a list of our agents to work with, let's call the service
+
+# put the api key you got from registering here
+$apikey = "your api key goes in here"
+
+# this is the uri for the api thatt i am calling
+$apiuri = "https://api.whatismybrowser.com/api/v2/user_agent_parse"
+
+# put the apikey in the header
+$header =  @{"X-API-KEY"=$apikey}
+
+# for each agent, create a json body to send, i thought i could
+# just send the @{} itself as a body, but that did not seem to
+# work when i tried it, posting it as json worked fine, however
+$results = $agentinfo | %{ iwr $apiuri -method post -headers $header -body (@{"user_agent"=$_.name} |convertto-json) }
+
+# and now to view the results, you can dig down into the $results object
+# yourself, or, in my case, just print the unique browsers like so...
+($results.content | convertfrom-json).parse | select -unique simple_software_string
+
 
 
 
