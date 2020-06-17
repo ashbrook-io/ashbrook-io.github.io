@@ -43,6 +43,25 @@ Note:
 So this is what I did next:
 
 ``` PowerShell
+# in the example,they use numbers for the keys, but state they can be other things.
+# i just left them as numbers to match their setup. i'm guessing you could use 
+# (new-guid).guid instead and avoid the ln var all together if that's your thing.
+# note that i am not using the 'count' value from up above for this as it's not needed
+# i just wanted that to look at when i was originally examining the $agentinfo results
+# i usually don't end powershell lines in semicolons, but i actually ran this as a
+# oneliner and spread it out here for readability.
+$ln=1; 
+$hash=[ordered]@{};
+$agentinfo | %{ $hash.add("$ln",$_.Name);$ln++};
+$json = @{"user_agents"=$hash} | convertto-json
+
+# now we have something that looks just like their example json string
+# you can check their page linked up above for a sample.
+
+
+
+
+
 
 ```
 
