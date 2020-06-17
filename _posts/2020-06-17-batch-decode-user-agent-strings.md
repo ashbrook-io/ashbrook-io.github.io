@@ -4,6 +4,7 @@ published: false
 title: Batch decode user agent strings
 subtitle: mozilla who/what now??
 date: '2020-06-18'
+image: /img/secretagent.png
 ---
 Recently I downloaded some web logs for an app I have running. This app is pretty old and hasn't been changed in quite some time. We're looking to freshen it up a bit, but it is a fairly simple app and there are no requests to 'change' it so we want to be careful not to break anything for any of the users.
 
