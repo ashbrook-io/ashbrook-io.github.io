@@ -1,6 +1,6 @@
 ---
 layout: post
-published: false
+published: true
 title: Batch decode user agent strings
 subtitle: mozilla who/what now??
 date: '2020-06-18'
