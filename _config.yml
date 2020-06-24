@@ -28,7 +28,9 @@ navbar-links:
   Site:
     - Hosting: "https://pages.github.com/"
     - Theme: "https://github.com/daattali/beautiful-jekyll"
-    - Editor: "http://prose.io"
+    - Editor: "https://prose.io"
+    - Gists: "https://gist.github.com/royashbrook"
+    - Source: "https://github.com/royashbrook/royashbrook.github.io"
 
 # Image to show in the navigation bar - image must be a square (width = height)
 # Remove this parameter if you don't want an image in the navbar
