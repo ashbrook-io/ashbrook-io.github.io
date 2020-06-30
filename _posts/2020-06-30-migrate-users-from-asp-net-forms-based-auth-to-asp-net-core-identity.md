@@ -255,6 +255,7 @@ There were many references I looked at while I was working on this. Here are som
 - https://support.microsoft.com/en-us/help/308157/how-to-implement-forms-based-authentication-in-your-asp-net-applicatio
 - https://dotnetcoretutorials.com/2019/06/20/publishing-a-single-exe-file-in-net-core-3-0/
 - https://community.spiceworks.com/how_to/153476-how-to-discover-types-classes-in-powershell
+- https://jasonwatmore.com/post/2019/10/21/aspnet-core-3-basic-authentication-tutorial-with-example-api
 
 
 
