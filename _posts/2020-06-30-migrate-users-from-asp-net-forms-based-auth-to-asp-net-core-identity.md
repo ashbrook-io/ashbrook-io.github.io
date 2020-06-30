@@ -11,6 +11,8 @@ At least that's what I'm going to cover. Basically the idea of having a brand ne
 
 You can check the second link up above to see what the end table looks like, but for now I'm going to just talk about the rest of this situation like you have an old app and plain text username/password pairs.
 
+## Let's begin
+
 Short version of this story is I wrote an app to generate the hashes I needed (based on the source from dotnetcore on github) and then just injected guids into the other fields that needed information. Probably not perfect, but it seems to work fine.
 
 Here are the sources for the relevant code from dotnet core identity:
@@ -165,7 +167,7 @@ True
 False
 ```
 
-This program can now be compiled into a single file (if you want) using `dotnet publish -r win-x64 -c Release /p:PublishSingleFile=true` if you want. That's what I did. At a minimum, i'd recommend building it in release mode as that makes it run much faster.
+This program can now be [compiled into a single file](https://dotnetcoretutorials.com/2019/06/20/publishing-a-single-exe-file-in-net-core-3-0/) (if you want) using `dotnet publish -r win-x64 -c Release /p:PublishSingleFile=true` if you want. That's what I did. At a minimum, i'd recommend building it in release mode as that makes it run much faster.
 
 I went ahead and put this code [here](https://github.com/royashbrook/CLI-PasswordHasher), but you can just follow the steps above to make it yourself.
 
@@ -223,10 +225,14 @@ select newid(),newid(),UserName, UPPER(UserName),1,[Hash],0,0,0,0 from a
 
 Note that I am removing/commenting out the *first* union all command and changing it to simply a select. Hopefully if you are doing this, you know why and this makes sense.
 
-# Profit...
+## Profit...
 
 That's it. Your users should be able to login. Or you should be able to login as them if you want to test it. You need the extra 1 and 0 values and the newid() lines or else they can't. I normalized to upper since that what it appears the identity logic does itself, but i guess that could be anything. I just tried to keep it as simple as possible.
 
 
+## Final Thoughts
 
+This is *really* only meant to be a very temporary solution to get over a hump. An old app that you can make work the same, but you don't have a great way to coordinate a release with the users. You can a/b test it, you can validate it all fully, and you have no reason to think anyone will notice or that the communication will cause more issues than it is worth. To me closing the security holes and other issues with a 15 year old code base is worth it, but this will be followed up with an initiative to migrate to a PWA and get into a real CI/CD cycle so this can be maintained easier moving forward. I don't recommend doing this and then sticking with this.
+
+But if you do **need** to stick with this a bit, you can [scaffold](https://docs.microsoft.com/en-us/aspnet/core/security/authentication/scaffold-identity?view=aspnetcore-3.1&tabs=netcore-cli) the identity pages, and customize items or follow [this article](https://andyp.dev/posts/disable-user-registrations-in-asp-net-core-3-identity) to disable user registration. As mentioned there, you'll need a way to register apps, but if you are stuck in between this place and the next place, at least you can generate the hashes using this method and simply insert new users or build your own internal registration app.
 
