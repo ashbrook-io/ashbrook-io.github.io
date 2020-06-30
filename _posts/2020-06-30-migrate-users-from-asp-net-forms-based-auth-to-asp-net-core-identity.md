@@ -11,6 +11,7 @@ At least that's what I'm going to cover. Basically the idea of having a brand ne
 
 You can check the second link up above to see what the end table looks like, but for now I'm going to just talk about the rest of this situation like you have an old app and plain text username/password pairs.
 
+Short version of this story is I wrote an app to generate the hashes I needed (based on the source from dotnetcore on github) and then just injected guids into the other fields that needed information. Probably not perfect, but it seems to work fine.
 
 I have some very internal applications we are looking to modernize. They have some users. I think they were maybe written in asp.net 1.1 or so based on some of the artifacts in them, but there are no project/solution files and everything has been somewhat lost to time. Fortunately they are fairly straightforward applications, so redoing some of the pages will not be terribly inconvenient, but one of the roadblocks to just doing a mostly straight conversion (meaning, rewriting the pages) in a new framework was the security.
 
