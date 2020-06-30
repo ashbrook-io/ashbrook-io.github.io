@@ -165,5 +165,68 @@ True
 False
 ```
 
-This program can now be compiled into a single file (if you want) using this:
+This program can now be compiled into a single file (if you want) using `dotnet publish -r win-x64 -c Release /p:PublishSingleFile=true` if you want. That's what I did. At a minimum, i'd recommend building it in release mode as that makes it run much faster.
+
+I went ahead and put this code [here](https://github.com/royashbrook/CLI-PasswordHasher), but you can just follow the steps above to make it yourself.
+
+## ok, so what now?
+
+OK, well at this point, I have to assume a few things. I have to assume that:
+- You already have a `dotnet new webapp` with the identity added
+- You have a database setup to support that
+- You know a little bit about powershell and editing files
+- You know a little bit about SQL, at least to run some commands
+
+I'm not going to go over setting up the webapp, but I already linked to the setup up top.
+
+So!!!! Since we have a database setup that we want to inject our users into, we just need a list of users and passwords and a way to generate our sql commands. I'm just going to use powershell for this. So we will have a txt file called users.txt that looks something like this. I'm using a tab seperated file just to make things easy to ready, but you could use a regular csv or whatever.
+
+```txt
+Username    Password
+User1   Password1
+User2   Password2
+User2   Password3
+```
+
+Now assuming  you are in the same folder as users.txt, and in powershell, you can run this command
+
+`$users = ipcsv users.txt -Delimiter "\t"`
+
+Now that you have the user data in memory in $users, you can swap to your directory with the hasing executable and run something like this:
+
+`$hashes = $logins | select Username, @{n="Hash";e={.\h.exe $_.Password}}`
+
+This assumes that you kept the property names above, and that you are using h.exe. You can change things accordingly. This will now give you a list of usernames and new password hashes. Now let's just gen a little sql code. I am basically going to use a CTE (if you don't know what that is, let's say it's like an inline temp table in sql) to process this list of users and feed it to an insert statement with some other values. So first we'll generate a big union queries for all of our users like this:
+
+`$hashes | %{"union all select '{0}','{1}'" -f $_.UserName,$_.Hash}`
+
+This will generate something like this:
+
+```txt
+union all select 'User1','somelonghashvalue'
+union all select 'User2','somelonghashvalue'
+union all select 'User3','somelonghashvalue'
+```
+
+Now we are going to go to our database and insert these values like this:
+
+```SQL
+;with a(UserName,Hash) as (
+--union all
+select 'User1','somelonghashvalue'
+union all select 'User2','somelonghashvalue'
+union all select 'User3','somelonghashvalue'
+)
+insert into [dbo].[AspNetUsers] ([Id],[SecurityStamp],UserName,[NormalizedUserName],[EmailConfirmed],[PasswordHash],[TwoFactorEnabled],[LockoutEnabled],AccessFailedCount,PhoneNumberConfirmed)
+select newid(),newid(),UserName, UPPER(UserName),1,[Hash],0,0,0,0 from a
+```
+
+Note that I am removing/commenting out the *first* union all command and changing it to simply a select. Hopefully if you are doing this, you know why and this makes sense.
+
+# Profit...
+
+That's it. Your users should be able to login. Or you should be able to login as them if you want to test it. You need the extra 1 and 0 values and the newid() lines or else they can't. I normalized to upper since that what it appears the identity logic does itself, but i guess that could be anything. I just tried to keep it as simple as possible.
+
+
+
 
