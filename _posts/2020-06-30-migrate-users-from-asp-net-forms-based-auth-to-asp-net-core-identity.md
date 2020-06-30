@@ -236,3 +236,10 @@ This is *really* only meant to be a very temporary solution to get over a hump. 
 
 But if you do **need** to stick with this a bit, you can [scaffold](https://docs.microsoft.com/en-us/aspnet/core/security/authentication/scaffold-identity?view=aspnetcore-3.1&tabs=netcore-cli) the identity pages, and customize items or follow [this article](https://andyp.dev/posts/disable-user-registrations-in-asp-net-core-3-identity) to disable user registration. As mentioned there, you'll need a way to register apps, but if you are stuck in between this place and the next place, at least you can generate the hashes using this method and simply insert new users or build your own internal registration app.
 
+## References
+
+Here are some of the many references I looked at while doing this.
+https://docs.microsoft.com/en-us/aspnet/core/security/authentication/identity?view=aspnetcore-3.1&tabs=netcore-cli
+https://docs.microsoft.com/en-us/aspnet/core/security/authentication/scaffold-identity?view=aspnetcore-3.1&tabs=netcore-cli
+
+
