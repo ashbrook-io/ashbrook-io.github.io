@@ -76,20 +76,21 @@ But if you do **need** to stick with this a bit, you can [scaffold](https://docs
 ## References
 
 There were many references I looked at while I was working on this. Here are some of the ones I found most useful:
-- https://docs.microsoft.com/en-us/aspnet/core/security/authentication/identity?view=aspnetcore-3.1&tabs=netcore-cli
-- https://docs.microsoft.com/en-us/aspnet/core/security/authentication/scaffold-identity?view=aspnetcore-3.1&tabs=netcore-cli
-- https://github.com/aspnet/Identity/blob/master/src/Core/PasswordHasher.cs
-- https://github.com/aspnet/Identity/blob/master/src/Core/PasswordHasherOptions.cs
-- https://andrewlock.net/exploring-the-asp-net-core-identity-passwordhasher/
-- https://andrewlock.net/migrating-passwords-in-asp-net-core-identity-with-a-custom-passwordhasher/
-- https://kenhaggerty.com/articles/article/aspnet-core-31-password-hasher
-- https://stackoverflow.com/questions/20621950/asp-net-identitys-default-password-hasher-how-does-it-work-and-is-it-secure
-- https://docs.microsoft.com/en-us/aspnet/core/security/authorization/simple?view=aspnetcore-3.1
-- https://andyp.dev/posts/disable-user-registrations-in-asp-net-core-3-identity
-- https://docs.microsoft.com/en-us/aspnet/core/security/authentication/identity-configuration?view=aspnetcore-3.1#password
-- https://code-maze.com/identity-asp-net-core-project/
-- https://docs.microsoft.com/en-us/aspnet/web-forms/overview/security/create-a-secure-aspnet-web-forms-app-with-user-registration-email-confirmation-and-password-reset
-- https://support.microsoft.com/en-us/help/308157/how-to-implement-forms-based-authentication-in-your-asp-net-applicatio
-- https://dotnetcoretutorials.com/2019/06/20/publishing-a-single-exe-file-in-net-core-3-0/
-- https://community.spiceworks.com/how_to/153476-how-to-discover-types-classes-in-powershell
-- https://jasonwatmore.com/post/2019/10/21/aspnet-core-3-basic-authentication-tutorial-with-example-api
+- [https://docs.microsoft.com/en-us/aspnet/core/security/authentication/identity?view=aspnetcore-3.1&tabs=netcore-cli](https://docs.microsoft.com/en-us/aspnet/core/security/authentication/identity?view=aspnetcore-3.1&tabs=netcore-cli)
+- [https://docs.microsoft.com/en-us/aspnet/core/security/authentication/scaffold-identity?view=aspnetcore-3.1&tabs=netcore-cli](https://docs.microsoft.com/en-us/aspnet/core/security/authentication/scaffold-identity?view=aspnetcore-3.1&tabs=netcore-cli)
+- [https://github.com/aspnet/Identity/blob/master/src/Core/PasswordHasher.cs](https://github.com/aspnet/Identity/blob/master/src/Core/PasswordHasher.cs)
+- [https://github.com/aspnet/Identity/blob/master/src/Core/PasswordHasherOptions.cs](https://github.com/aspnet/Identity/blob/master/src/Core/PasswordHasherOptions.cs)
+- [https://andrewlock.net/exploring-the-asp-net-core-identity-passwordhasher/](https://andrewlock.net/exploring-the-asp-net-core-identity-passwordhasher/)
+- [https://andrewlock.net/migrating-passwords-in-asp-net-core-identity-with-a-custom-passwordhasher/](https://andrewlock.net/migrating-passwords-in-asp-net-core-identity-with-a-custom-passwordhasher/)
+- [https://kenhaggerty.com/articles/article/aspnet-core-31-password-hasher](https://kenhaggerty.com/articles/article/aspnet-core-31-password-hasher)
+- [https://stackoverflow.com/questions/20621950/asp-net-identitys-default-password-hasher-how-does-it-work-and-is-it-secure](https://stackoverflow.com/questions/20621950/asp-net-identitys-default-password-hasher-how-does-it-work-and-is-it-secure)
+- [https://docs.microsoft.com/en-us/aspnet/core/security/authorization/simple?view=aspnetcore-3.1](https://docs.microsoft.com/en-us/aspnet/core/security/authorization/simple?view=aspnetcore-3.1)
+- [https://andyp.dev/posts/disable-user-registrations-in-asp-net-core-3-identity](https://andyp.dev/posts/disable-user-registrations-in-asp-net-core-3-identity)
+- [https://docs.microsoft.com/en-us/aspnet/core/security/authentication/identity-configuration?view=aspnetcore-3.1#password](https://docs.microsoft.com/en-us/aspnet/core/security/authentication/identity-configuration?view=aspnetcore-3.1#password)
+- [https://code-maze.com/identity-asp-net-core-project/](https://code-maze.com/identity-asp-net-core-project/)
+- [https://docs.microsoft.com/en-us/aspnet/web-forms/overview/security/create-a-secure-aspnet-web-forms-app-with-user-registration-email-confirmation-and-password-reset](https://docs.microsoft.com/en-us/aspnet/web-forms/overview/security/create-a-secure-aspnet-web-forms-app-with-user-registration-email-confirmation-and-password-reset)
+- [https://support.microsoft.com/en-us/help/308157/how-to-implement-forms-based-authentication-in-your-asp-net-applicatio](https://support.microsoft.com/en-us/help/308157/how-to-implement-forms-based-authentication-in-your-asp-net-applicatio)
+- [https://dotnetcoretutorials.com/2019/06/20/publishing-a-single-exe-file-in-net-core-3-0/](https://dotnetcoretutorials.com/2019/06/20/publishing-a-single-exe-file-in-net-core-3-0/)
+- [https://community.spiceworks.com/how_to/153476-how-to-discover-types-classes-in-powershell](https://community.spiceworks.com/how_to/153476-how-to-discover-types-classes-in-powershell)
+- [https://jasonwatmore.com/post/2019/10/21/aspnet-core-3-basic-authentication-tutorial-with-example-api](https://jasonwatmore.com/post/2019/10/21/aspnet-core-3-basic-authentication-tutorial-with-example-api)
+
