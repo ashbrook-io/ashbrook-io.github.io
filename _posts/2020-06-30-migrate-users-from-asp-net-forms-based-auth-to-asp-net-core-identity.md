@@ -1,7 +1,10 @@
 ---
 layout: post
-published: false
+published: true
 title: Migrate users from ASP.NET Forms-based Auth to ASP.NET Core Identity
+subtitle: How old is this app again?
+date: '2020-06-30'
+image: /img/mummy_head.jpg
 ---
 Do you have a very old ASP forms based app? Do you want to run `dotnet new webapp` and migrate your pages, but you don't know how you'll simply move the users over to the new world? Well, let me give you a solution *if* you are moving over to ASP.Net Core Identity. If you don't know what that is, think about it like new forms auth, I suppose.
 
