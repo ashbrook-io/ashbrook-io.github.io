@@ -30,7 +30,7 @@ az devops project list --output table
 
 I normally was just creating the work-items and then opening them, but a lot of times the only thing I wanted to open them for *right then* was to put in the story points. I would later go back into the GUI and put in description information and all of the story points.
 
-``PowerShell
+```PowerShell
 
 # create user story, and open it
 az boards work-item create --type "user story" --title "some title" --project "project name" --open
