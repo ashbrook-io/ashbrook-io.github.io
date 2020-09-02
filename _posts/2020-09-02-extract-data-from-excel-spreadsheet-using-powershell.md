@@ -114,6 +114,8 @@ $values = $sheet.worksheet.sheetData.row.c |
 
 ```
 
+> EDIT: After trying this on a few other computers, I ran into too many instances where I needed the assembly reference. So I went ahead and added this to the top of the function (could be any where though) `Add-Type -AssemblyName System.IO.Compression.FileSystem` and thenreplaced the line `$zip = [io.compression.zipfile]::OpenRead($zipPath)` with `$zip = [System.IO.Compression.ZipFile]::OpenRead($zipPath)` and seemed to have no issues after that.
+
 The top Shell.Application method above is not in a function because I was still testing things. I *think* that the file had to be named with a `.zip` extension for the Shell to work right, but maybe something else was being squirrely. Now io.compression.zipfile seems to work fine on newer windows without any references, but you could possibly need to add that assembly. I believe that would be as simple as `Add-Type -AssemblyName system.io.compression` but YMMV.
 
 Regardless of the two methods above chosen, ultimately you end up with the xml file contents and then you filter them. You can copy out the file and get-contents on that file, or you can do something like with zipfile and return just that one file from within the zip.
