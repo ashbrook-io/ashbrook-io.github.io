@@ -122,7 +122,7 @@ Regardless of the two methods above chosen, ultimately you end up with the xml f
 
 ## Conclusion and Notes
 
-I went with the zipfile method. Pretty simple conclusion. =)
+I went with the Direct Extract method using zipfile. Pretty simple conclusion. =)
 
 Some items of note:
 
