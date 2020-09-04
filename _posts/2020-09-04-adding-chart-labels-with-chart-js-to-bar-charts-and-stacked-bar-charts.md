@@ -41,11 +41,26 @@ As you can see above, I then push a new dataset onto the collection for chartjs,
 
 {% gist c19b5ed165ff1a93791cc6ddc7157234 StackedBarChartLabels.js %}
 
+### Thoughts
+
 > That seems... kinda crazy, no?
 
 Yeah, I agree with you. But it does work and I think it's ultimately a lot less code than adding in the data label plugin. Not something to copy/paste around maybe, but I don't have a lot of need for this so this was a pretty simple tweak. This was kind of born out of me just walking through the natural steps of what i'd like to do. I have a stacked bar chart and i want labels. ok, how do i get the sum values, well I'll make another dataset, how can i hide that, well you can't hide it with a bar because the stacking will give you a wrong value, so i can just make it a combo chart, hide the line, and float it a little.
 
+It's also worth noting that with additional tweaking this could easily be made a global plugin and just registered once vs inline. In my case I just imported the one I wanted for the chart that was going to use it initially. But, do we need a plugin? Do we have any other options? Well, there are probably a million ways I guess to do this, but the other contender that I found that seemed to work well was just doing this via animation....
 
+## Animation
+
+So a common example I found for doing stuff like this leveraged the onComplete hook for animation. You can see an example of this below for a stacked bar chart. There are some differences which I'll go through here rather than in code comments.
+
+1. So the first thing to note is that these events are passed animation objects. you have to get the chart off of that object as the chart is not passed directly to these events.
+2. I am "iterating" through the datasets and filtering by the one with a label of 'Total'. This is that new line chart that is hidden and added as mentioned above for the plugin method. There will always be one, but I am just filtering and iterating here.
+3. I happen to know that the meta key is 3 here so that's hard coded. pretty sure this would never get a great idea, but for some reason i couldn't find the controller to call the meta by index for this object and i didn't go back and refactor this after i switched over to plugins.
+4. I also have some values hard coded instead of calculated.
+
+Other than those items, it's basically the same thing. 
+
+{% gist c19b5ed165ff1a93791cc6ddc7157234 Animation.js %}
 
 ## A New Post
 
