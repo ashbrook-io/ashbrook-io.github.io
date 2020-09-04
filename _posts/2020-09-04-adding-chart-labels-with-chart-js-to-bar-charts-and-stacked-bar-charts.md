@@ -1,7 +1,9 @@
 ---
 layout: post
-published: false
+published: true
 title: Adding Chart Labels with Chart JS to Bar Charts and Stacked Bar Charts
+subtitle: A real life example
+date: '2020-09-04'
 ---
 I'll preface this by saying that you probably should just use the the official data label plugin from chartjs. You can find that [here](https://github.com/chartjs/chartjs-plugin-datalabels). I didn't want to add another dependency for charting, however, so I decided to just roll my own setup. Here are two ways I did this.
 
