@@ -58,10 +58,10 @@ So a common example I found for doing stuff like this leveraged the onComplete h
 3. I happen to know that the meta key is 3 here so that's hard coded. pretty sure this would never get a great idea, but for some reason i couldn't find the controller to call the meta by index for this object and i didn't go back and refactor this after i switched over to plugins.
 4. I also have some values hard coded instead of calculated.
 
-Other than those items, it's basically the same thing. So originally I had things setup this way without some of the extra stuff in there for formatting etc. and that worked fine. 
-
 {% gist c19b5ed165ff1a93791cc6ddc7157234 Animation.js %}
 
-## A New Post
+Other than the items listed above, it's basically the same thing. So originally I had things setup this way without some of the extra stuff in there for formatting etc. and that worked fine. So why not use this? Well I could. I'm not sure if there is a concrete reason to use one over the other. Basically you could use the same function for either of them and just pass the chart object over to it and it should work. It mostly has to do with when and how you want to deal with the animation. 
 
-Enter text in [Markdown](http://daringfireball.net/projects/markdown/). Use the toolbar above, or click the **?** button for formatting help.
+# Conclusion
+
+One benefit with plugins is you can register them globally, although I'm not sure if that really makes much of a difference. I'd like to think it would, but I can't say for sure. I like the animation in the charts, so one benefit of doing the plugin is you can use other event triggers other than when the animation completes and maybe decouple them some. I already do this for my vertical line sunday thing. Is that better? I dunno. Honestly I'm not sure that the animation adds much value here. It looks kind of cool briefly, but these are some boring charts and this isn't for an audience that wants extra bells and whistles just for the sake of lines shifting smoothly into place. If you disable animation, it's pretty easy to just leave this in the animation oncomplete. But if you want hover over tool tips and things, it seems better to use the plugin method. I may use them both from time to time, but I thought I would write a post about it because it was interesting getting this stuff to work regardless.
