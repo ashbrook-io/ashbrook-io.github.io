@@ -58,7 +58,7 @@ So a common example I found for doing stuff like this leveraged the onComplete h
 3. I happen to know that the meta key is 3 here so that's hard coded. pretty sure this would never get a great idea, but for some reason i couldn't find the controller to call the meta by index for this object and i didn't go back and refactor this after i switched over to plugins.
 4. I also have some values hard coded instead of calculated.
 
-Other than those items, it's basically the same thing. 
+Other than those items, it's basically the same thing. So originally I had things setup this way without some of the extra stuff in there for formatting etc. and that worked fine. 
 
 {% gist c19b5ed165ff1a93791cc6ddc7157234 Animation.js %}
 
