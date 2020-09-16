@@ -13,11 +13,11 @@ I currently have a dashboard application that pulls some zipped data down, unzip
 
 ## From this...
 
-{% gist 4ab180673a9d50e734bae481e176d8c4 BarChartLabels.js %}
+{% gist 4ab180673a9d50e734bae481e176d8c4 JSZip.js %}
 
 ## To this...
 
-{% gist 4ab180673a9d50e734bae481e176d8c4 BarChartLabels.js %}
+{% gist 4ab180673a9d50e734bae481e176d8c4 unzipit.js %}
 
 ## Conclusion
 
