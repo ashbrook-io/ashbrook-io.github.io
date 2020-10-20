@@ -35,3 +35,6 @@ az repos list --project %PROJECT_NAME% --output table
 ```
 
 This is a small change to make. Even small changes can help if there are enough of them.
+
+> Edit: I did find a need to run this as a report sometimes for all of the projects and all of the repos. I used the following one liner for that. You can pretty it up and merge the output if needed, but I just needed something i could look at occassionally. `(az devops project list | convertfrom-json).value | %{ az repos list --project $_.name --output table }` Note that you'll need to be logged in and have appropriate permissions to get these results.
+
