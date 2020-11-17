@@ -12,4 +12,63 @@ I have a svelte project. I wanted to include a way to tell what git commit i was
 
 ## ok, so about the one line..
 
-Yes, yes, yes. I know it's a _long_ line. =). So if you aren't familiar with [svelte](https://svelte.dev/), it is a js framework and it uses [rollup](https://rollupjs.org/), by default, as it's bundler. You can use whatever you want, but I'm using rollup since that's what it came with.
+Yes, yes, yes. I know it's a _long_ line. =). But it is what it is. So if you aren't familiar with [svelte](https://svelte.dev/), it is a js framework and it uses [rollup](https://rollupjs.org/), by default, as it's bundler. You can use whatever you want, but I'm using rollup since that's what it came with. In rollup, you can add plugins to do different things. I couldn't find one that did what I wanted which was simply to add some way to see the git hash that the current build was deployed from. So I looked for how to write one. I came across [this](https://lihautan.com/12-line-rollup-plugin/) great article that totally gave me what I was looking for. It's even easier than I thought since you can just put the plugin inline. If you are using svelte and open up your rollup.config.js, you should see the top of the plugins area looking something like this:
+
+```javascript
+	plugins: [
+		svelte({
+			// enable run-time checks when not in production
+			dev: !production,
+			// we'll extract any component CSS out into
+			// a separate file - better for performance
+			css: css => {
+				css.write('public/build/bundle.css');
+			}
+		}),
+```
+
+and you can just add it just below that last line like:
+
+```javascript
+	plugins: [
+		svelte({
+			// enable run-time checks when not in production
+			dev: !production,
+			// we'll extract any component CSS out into
+			// a separate file - better for performance
+			css: css => {
+				css.write('public/build/bundle.css');
+			}
+		}),
+        {generateBundle(){require('child_process').exec("git log -1 --pretty=format:%H%n%ae%n%ad > .\\public\\build\\commit.txt")}},
+```
+
+## remind me... what are we doing again?
+
+I want to add some type of artifact or way to associate a git hash with the deployed code. So when the site is out there, I can look somewhere and see what git commit it is. I had no requirement on the format of the output. Like to put it in index.html, or another file, or whatever. So I am just looking for the easiest way. I knew I could get the info I wanted by just running `git log -1` because i just wanted the last commit. I just wasn't sure how to actually get that info in via code and do something with it. Enter [child_process](https://nodejs.org/api/child_process.html#child_process_child_process_exec_command_options_callback). This seemed to do what I needed. If you read into this, you can actually access stdios and originally i went that route. But ultimately I decided it was just easiest to simply dump the results of the command out to a file. By default, the working directory will be the current dir and i am always building from within this directory anyway so running the exact command i wanted and having it output the file in that command worked well. I didn't really want any messages, just the hash and the name/email and a date. But you could chang the command to whatever you want.
+
+Also since `{generateBundle(){require('child_process').exec("git log -1 --pretty=format:%H%n%ae%n%ad > .\\public\\build\\commit.txt")}},` is a little bit hard to read, here is a prettied up and commented version.
+
+
+```javascript
+{
+	name: 'gitlog1',
+	generateBundle() {
+		//git command to run
+		const g = "git log -1 --pretty=format:%H%n%ae%n%ad";
+		//where to pipe it to
+		const o = ".\\public\\build\\commit.txt";
+		//cmd to run g, pipe to o
+		const c = `${g} > ${o}`
+		//child process ref
+		const { exec } = require('child_process');
+		//exec c and show status
+		exec(c,()=>console.log(`\n\ngitlog1 ran:\n\n\t${c}\n\n`))
+	}
+},
+```
+
+I'm running on windows, and am just letting exec use the default shell. If you are on another operating system or want to use another shell you'll need to make adjustments. The documentation on child_process has plenty of information on how to do that. For me, I just did the quickest thing. I am calling the plugin "gitlog1" but really it could be anything.
+
+I'll mention here that you need to make sure you don't run something you don't trust or make sure you don't have input values that you may not trust in here as you could delete things etc. So YMMV, buyer beware, etc etc. I am just hard coding my values so it works fine.
+
