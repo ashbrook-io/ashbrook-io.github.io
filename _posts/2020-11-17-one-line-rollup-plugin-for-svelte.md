@@ -1,8 +1,9 @@
 ---
 layout: post
-published: false
+published: true
 title: one line rollup plugin for svelte
 date: '2020-11-17'
+subtitle: git log -1 > something...
 ---
 I am a simple man. I have simple needs. Like I need to output the results of `git log -1` into a file with some formatting when I build. Not so much to ask. Here is a line to do that: `{generateBundle(){require('child_process').exec("git log -1 --pretty=format:%H%n%ae%n%ad > .\\public\\build\\commit.txt")}},`. Basically you just add this to your rollup.config.js in the plugins section. How about a little more explanation?
 
@@ -68,7 +69,7 @@ Also since `{generateBundle(){require('child_process').exec("git log -1 --pretty
 },
 ```
 
-I'm running on windows, and am just letting exec use the default shell. If you are on another operating system or want to use another shell you'll need to make adjustments. The documentation on child_process has plenty of information on how to do that. For me, I just did the quickest thing. I am calling the plugin "gitlog1" but really it could be anything.
+I'm running on windows, and am just letting exec use the default shell, which is cmd. If you are on another operating system or want to use another shell you'll need to make adjustments. The documentation on child_process has plenty of information on how to do that. For me, I just did the quickest thing. I am calling the plugin "gitlog1" but really it could be anything. And you could also really run anything you want.
 
 I'll mention here that you need to make sure you don't run something you don't trust or make sure you don't have input values that you may not trust in here as you could delete things etc. So YMMV, buyer beware, etc etc. I am just hard coding my values so it works fine.
 
