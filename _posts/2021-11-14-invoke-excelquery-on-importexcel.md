@@ -6,7 +6,6 @@ subtitle: >-
   Using SQL queries to pull data out of Excel using the ImportExcel PowerShell
   module
 date: '2021-11-13'
-image: 'https://www.dictionary.com/e/wp-content/uploads/2018/03/mind-blown-300x300.jpg'
 ---
 [ImportExcel](https://github.com/dfinke/ImportExcel) is a wonderful module that lets you interact with Excel files using powershell without having Excel installed. I have been using [@DougFinke](https://twitter.com/dfinke)'s module to great success fo some time, however for some situations I found it easier to manage my interaction with Excel files using SQL.
 
