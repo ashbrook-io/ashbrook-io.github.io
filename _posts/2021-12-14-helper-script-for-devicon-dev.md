@@ -1,13 +1,13 @@
 ---
 layout: post
 published: true
-title: Helper script for devicons.dev
+title: Helper script for devicon.dev
 subtitle: >-
   because copy/paste is too painful!
 date: '2021-12-14'
 ---
 
-I got tired of copying/pasting while adding [devicons](https://devicon.dev/) to my GitHub profile page recently, so I created this little helper script so I could just click on the icons and it would generate some markup for me.
+I got tired of copying/pasting while adding icons from [devicon.dev](https://devicon.dev/) to my GitHub profile page recently, so I created this little helper script so I could just click on the icons and it would generate some markup for me.
 
 {% gist 64a1333684c40b4d885fb6d353913266 %}
 
