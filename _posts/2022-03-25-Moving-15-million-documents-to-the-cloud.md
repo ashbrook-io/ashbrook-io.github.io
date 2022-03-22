@@ -20,8 +20,32 @@ Currently, I am working at a relatively small company for myself. ~500 people an
 
 Currently, we already have a new repository system in place. All new images go there and all that system works fine, but we did not want to move all of the old stuff over to keep costs down. The new system is not cheap in terms of storage and that's a discussion for another day. We had a team that was still adding some data to it while they migrated that pinned the old system in place until recently. Now they have moved to the new system, so we can address the old system in terms of what to do with it for a longer term home. I'll call this system the legacy system. The legacy system is used for reference and searching for older documents on an as needed basis. It's not frequently needed, but it *is* still needed. Currently we have about 16 million documents on an old server. Normally there is an id number that exists in another system that we would look up the image in this system, but there are about 30 other fields that are used to index the documents as well for searching.
 
+The existing system has a little over 16 million files stored and about 133million indexed values. Some of these documents have multiple pages, but they are generally just single page. The document table shows that there are about 13.5 million documents and maybe 10-20k more pages than there are document objects. Seems this system may have been purged prior to my time here in the last 5 years. This makes some senser as there are documents going back to 2002 for some reference data, even though I don't see any documents dated earlier than 2006. As best we can, we'd like to take everything if possible since this is just an archive anyway.
+
+Current system is a win2k8 machine running an old version of sql that has been migrated probably since sql 6.5 or sql 7 a few times. This is one of the last machines closing out a datacenter migration project. All major systems have been moved for some time, but now it's time to handle a few infrastructure servers and this one so all of the equipment can be decommissioned. The old version of windows and sql limits a few tooling decisions and wizards, but for the most part we'll just be working around those.
+
 
 ### To-Be
+
+Target is currently to get the index data into some location where we can setup a simple web application to search the existing index data. When searching for solutions that involved storing blob data and using an existing index, I didn't see much. I'm guessing because it would seem that this is fairly simple, I think. Copy the blob data somewhere. Copy the index somewhere. Make a little app to search the index and give a link to the blob data.
+
+This is kind of high level. As this system maybe has a dozen users who may search it, it doesn't not require anything incredibly robust, but we don't want something that is bad either. The main goal for target state is maintaining the search and getting rid of the old infrastructure.
+
+To that end, the current plan is something like this:
+
+1. Handle SQL data (Index)
+  1. Create a new temporary sql VM in azure.
+  2. Copy a .bak file and restore it.
+  3. Use the new server to purge anything needed, then migrate to sql azure
+2. Handle Files
+  1. ~11 Million files have already been moved into a Azure Storage Container
+  2. Move the remaining files (~2.5 Million)
+3. Create new searcher app
+4. Turn off old machine (equipment will decomm in another effort)
+
+### What happened?
+
+
 
 stub post copied below for editing. =)
 I got tired of copying/pasting while adding icons from [devicon.dev](https://devicon.dev/) to my GitHub profile page recently, so I created this little helper script so I could just click on the icons and it would generate some markup for me.
