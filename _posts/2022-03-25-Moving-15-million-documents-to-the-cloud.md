@@ -7,6 +7,21 @@ subtitle: >-
 date: '2022-04-01'
 ---
 
+Moving an image repository to the cloud is not quite what I would call turnkey. Starting up a new one is, I think, relatively simple. At the simplest you could just grab a SaaS solution that offers the capability that you want. At the most complex, you could analyze all the difference services that you want and build something yourself. Moving an existing one has an array of considerations, however. Mostly I think these can be broken down for many non-IT folks as:
+
+1. Does it work as least as well as it did before?
+2. Does it cost less than it did before?
+
+I've worked on several similar projects in the past. I think most were actually bigger than what I'm doing now, but they were at bigger companies so there were lots of decisions that were already made. Things like which vendor to use or what hardware to use or whether or not the cloud could be used were normally matters of internal policy and not something the project team was able to change or address.
+
+Currently, I am working at a relatively small company for myself. ~500 people and ~100MM in revenue. I'm not sure on the exact numbers, but just for sizing it's around there. We are a transportation company and everything transported has papers associated with it. We also have expenses and receipts that need to be tracked. I figured I would write about migrating this system to the cloud. 
+
+### As-Is
+
+Currently, we already have a new repository system in place. All new images go there and all that system works fine, but we did not want to move all of the old stuff over to keep costs down. The new system is not cheap in terms of storage and that's a discussion for another day. We had a team that was still adding some data to it while they migrated that pinned the old system in place until recently. Now they have moved to the new system, so we can address the old system in terms of what to do with it for a longer term home. I'll call this system the legacy system. The legacy system is used for reference and searching for older documents on an as needed basis. It's not frequently needed, but it *is* still needed. Currently we have about 16 million documents on an old server. Normally there is an id number that exists in another system that we would look up the image in this system, but there are about 30 other fields that are used to index the documents as well for searching.
+
+
+### To-Be
 
 stub post copied below for editing. =)
 I got tired of copying/pasting while adding icons from [devicon.dev](https://devicon.dev/) to my GitHub profile page recently, so I created this little helper script so I could just click on the icons and it would generate some markup for me.
