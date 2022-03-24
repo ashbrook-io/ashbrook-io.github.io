@@ -164,8 +164,14 @@ Plan for the next day:
 
 So first thing I did on Day 4 was start writing this blog post. I had already intended to keep a running narrative, but I realized I was on Day 4 and just had notes of what I was doing which isn't exactly what I wanted to do originally. So I caught up to here. =)
 
+I'm still not exactly sure what shape the data is going to take, so I cleared out all of the data from the database just to narrow the objects in my head space for now. DB01 was turned off for now and I am using Azure Data Studio for all of my sql work on my mac. The key tables with metadata that I need are these:
 
-
+- PropertyCharValues
+- PropertyDateValues
+- PropertyFloatValues
+- DocumentFiles
+- 
+There are some other 'type' tables and also a table for mapping the file to the documentid as well as a handful of other items. But mainly we need the index data for the property value tables and which file it goes with. There are some versioning considerations also, but mainly my point is there are another 300+ tables that we don't need. So I first want to clean this out just so we can retain this base copy of all of the metadata, but skip all of the junk we don't. So next I went through all of the tables and other objects and cleaned things out.
 
 
 
