@@ -173,6 +173,35 @@ I'm still not exactly sure what shape the data is going to take, so I cleared ou
 - 
 There are some other 'type' tables and also a table for mapping the file to the documentid as well as a handful of other items. But mainly we need the index data for the property value tables and which file it goes with. There are some versioning considerations also, but mainly my point is there are another 300+ tables that we don't need. So I first want to clean this out just so we can retain this base copy of all of the metadata, but skip all of the junk we don't. So next I went through all of the tables and other objects and cleaned things out.
 
+First I wiped all of the views using `Select 'drop view [' + [name] + ']' From sys.objects where type = 'v'`. Note that this will actually catch some system views that won't delete. But I wasn't worried about this since this is basicaly a scratch type of db and worked for my purposes.
+
+To do this I used variations on this sql:
+
+```sql
+SELECT
+'drop table [' + t.NAME + ']' AS TableName,
+MAX(p.rows) AS RowCounts,
+(SUM(a.total_pages) * 8) / 1024.0 as TotalSpaceMB,
+(SUM(a.used_pages) * 8) / 1024.0 as UsedSpaceMB,
+(SUM(a.data_pages) * 8) /1024.0 as DataSpaceMB
+FROM sys.tables t
+INNER JOIN sys.indexes i ON t.OBJECT_ID = i.object_id
+INNER JOIN sys.partitions p ON i.object_id = p.OBJECT_ID AND i.index_id = p.index_id
+INNER JOIN sys.allocation_units a ON p.partition_id = a.container_id
+WHERE i.OBJECT_ID > 255
+and t.type = 'u'
+AND i.index_id IN (0,1)
+GROUP BY t.NAME
+having MAX(p.rows) < 1
+ORDER BY TotalSpaceMB DESC
+```
+
+which is a variation of the script found [here](https://blog.sqlauthority.com/2021/02/12/sql-server-list-tables-with-size-and-row-counts/?msclkid=42a165deab9911ec9ea61f00cf49541a). There are tons of ways to do this, but I just picked the first one from google for listing all table row counts.
+
+I also used a variation of the view query above to sort some of the tables by names when i knew groups of names were not needed. `select * From sys.objects where type = 'u' and name like 'app%'` for example.
+
+
+
 
 
 stub post copied below for editing. =)
