@@ -258,7 +258,11 @@ query from [here](https://stackoverflow.com/questions/14685596/queries-to-genera
 results:
 ![image](https://user-images.githubusercontent.com/7390156/160002173-fc69d3cb-d164-4c21-bf93-f6e8db9e5888.png)
 
+Not too shabby, but I think we can probably kick some of these indexes off. Given the size difference, I started with the Documents and DocumentFiles tables to see how performance was dropping the non PK indexes. Most likely, this will all simply end up as a single table using the file name as the key since that file name matches the blob path to the file. As this is an archive, there will be no more property types or anything to add, so there isn't really a need to map types to tables,etc. We can just use columns. I'm thinking this will be easier/faster to do, in terms of manipulating the data, within SQL. But once I get a canned query, I may just extract the data a year at a time and import it.
 
+It also *appears* that I could just add these values as tags onto the blobs and I think searching that would just be a traffic cost which is minimal as far as I can tell. Most of the pricing data I could find had to do with using azure search which would be more in tune with using AI to build an index and search based on extracting data. But since I already have the index, that doesn't seem really needed. These are just thoughts I'm thinking while I wait for the initial index drop to take place on the smaller tables. =)
+
+...time passes...
 
 
 
