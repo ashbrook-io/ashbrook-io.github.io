@@ -101,6 +101,29 @@ To copy the files, I simply used robocopy to mirror the source folder using some
 
 Initially I forgot to put the MT flag and it ran all night and only copied about 5% of the data. So the next morning I remembered I should do that so stopped the command and ran it again with 128 threads. It uses 8 threads by default. Just doing that increased the speed by about 10x for the copy and it finished in about an hour or two the next morning I believe.
 
+I also originally created my vm with some wrong config and had to wipe it and start over. Not a big deal, but just worth noting as it was part of the experience. =)
+
+At the end of the day I had the files copying and the database restored to a sql server in azure.
+
+Plan for the next day:
+
+Initial high level plan for next steps:
+
+- Move DB from temp server to Azure SQL
+- Finish moving files to temp server
+- Move files from temp server to blob storage
+- Get started on moving data to Azure Tables (or.... whatever?)
+
+#### Day 3
+
+First thing was getting the right MT switch on robocopy and getting that copy going. This worked without an issue and I moved on to copying the files to blob storage. These files are for archive purposes, but for now we are just putting them into cool storage. I already have a storage account named 'cool' that we use for this purpose. It has all of the older data in it already. I believe when I moved it over several years ago, I used azcopy to do this. In modern times, I can just use the azure storage explorer tool. It uses azcopy under the hood (you can actually copy the command once you've started the process) so it just makes my life easy. These blobs are stored in a single folder, then in that folder there are folders numbered 000-999, then each of those folders has the same numbered folders, then under those folders are the files. For top level folders we only have numbers 000 through 017 total. I think the old system must use roughly one folder per year as we do have ~18 years of data, but I'm not certain. For our purposes, it doesnt' really matter. It just matters that we only have folders 015, 016, and 017 left on the server. 
+
+
+
+
+
+
+
 
 stub post copied below for editing. =)
 I got tired of copying/pasting while adding icons from [devicon.dev](https://devicon.dev/) to my GitHub profile page recently, so I created this little helper script so I could just click on the icons and it would generate some markup for me.
