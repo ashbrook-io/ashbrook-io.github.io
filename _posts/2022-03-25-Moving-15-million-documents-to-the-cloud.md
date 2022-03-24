@@ -200,6 +200,30 @@ which is a variation of the script found [here](https://blog.sqlauthority.com/20
 
 I also used a variation of the view query above to sort some of the tables by names when i knew groups of names were not needed. `select * From sys.objects where type = 'u' and name like 'app%'` for example.
 
+First I wiped all tables that had 0 records. One of those had a FK, so I checked it out and it was part of a group of tables that started with ERM, there appeared to be a group with that and ERT. I think these had to do with printing. I wiped these as well and dropped about 5GB and maybe 20 million rows total from the DB.
+
+After this, I did a couple more batches of tables and every time got a handful of constraint issues. After dealing with a few manually, I hit up google for a 'wipe all fk constraints' script. Used this:
+
+```sql
+declare @sql nvarchar(max) = (
+    select 
+        'alter table ' + quotename(schema_name(schema_id)) + '.' +
+        quotename(object_name(parent_object_id)) +
+        ' drop constraint '+quotename(name) + ';'
+    from sys.foreign_keys
+    for xml path('')
+);
+exec sp_executesql @sql;
+```
+
+which was one of the solutions [here](https://stackoverflow.com/questions/12721823/how-to-drop-all-foreign-key-constraints-in-all-tables?msclkid=54954aa9aba411eca4db441e338e3170)
+
+Dropping audit tables got me back another 10-15GB and 25million rows or so. I basically repeated this process several times over about an hour or so to just keep peeling out data. While I was doing this, I would pull out some kind of batch by name or some other criteria, maybe take a look through the tables to make sure there was nothing I wanted to keep, and then purge any other tables. After about an hour I had peeled ~25GB out of the ~100GB db. Obviously I hadn't made it to any of the big tables yet and *hopefully* we would end up keeping quite a bit as most of this data *is* index data, but you never know.
+
+I had a soft target of at least getting below 50GB as I had to increase my pool DB max size from 50GB to fit this particular database, so I wanted to target that so I could put things back where they were. =)
+
+
+
 
 
 
