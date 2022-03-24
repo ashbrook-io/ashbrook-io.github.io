@@ -264,6 +264,32 @@ It also *appears* that I could just add these values as tags onto the blobs and 
 
 ...time passes...
 
+After awhile, I killed the spid that was running the index dropping command. Not sure where it was hung up, but I ran multiple drop index commands. looks like it got through one table and was hung up on the other or just processing. I could see via sp_who2 it was doing disk io, but i didn't want to wait so I killed it. After this I simply disabled the indexes on that table and it cleared the space.
+
+After this I decided to go ahead and size up the remaining indexes so I could target the big ones I didn't want
+
+I used the script below from [here](https://basitaalishan.com/2012/07/06/find-the-size-of-index-in-sql-server/?msclkid=818831bcabbb11eca2845091910ba64e)
+
+```sql
+SELECT i.[name] AS IndexName
+    ,SUM(s.[used_page_count]) * 8 AS IndexSizeKB
+FROM sys.dm_db_partition_stats AS s
+INNER JOIN sys.indexes AS i ON s.[object_id] = i.[object_id]
+    AND s.[index_id] = i.[index_id]
+GROUP BY i.[name]
+ORDER BY SUM(s.[used_page_count]) desc
+```
+
+For our propertycharvalue table (has most of the metadata) there is a single index that is used which has our documentid, the value, and the propertyid. Since that's all we need, we'll disable/drop the other indexes.
+
+...time passes...
+
+After some more fiddling around, I finally noticed that the indexes that were named as if they were clustered, were not in fact clustered. this was causing some inadvertant index disabling and just generally silliness. So, make sure you know which are clustered and which aren't before you start messing around. It just so happened that the first index I picked to disable on several of the tables happened to be the clustered index even though the name made me think it was not. Lesson learned. =) Unfortunately, disabling that index meant we needed to rebuild it to turn it back on. This took some time. =)
+
+...later that night...
+
+
+
 
 
 
