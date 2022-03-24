@@ -87,6 +87,7 @@ snip from the export template:
 ```
 
 As soon as it was up, there seemed to be some windows updates. So I did those and restarted. Then I went and grabbed the RDP file for download. I'm using a mac and have the microsoft rdp app to use for this.
+
 ![image](https://user-images.githubusercontent.com/7390156/159936739-ee042d8b-b6d0-4637-901d-8bd5fd583509.png)
 
 I opened RDP with no issues and just start>run and typed in the UNC of the source server, authenticated, and dragged the file over to the data drive on the new server. The backup file was about 100GB, so I didn't bother with any other fancy copy commands with auto-resume or something as I expected it to work fine in relatively short order and it did. I think it maybe took ~15-45 minutes to copy or so. I moved on to some other items while that was going in the background so I didn't watch it too closely and it was done when I came back to it.
@@ -116,9 +117,52 @@ Initial high level plan for next steps:
 
 #### Day 3
 
-First thing was getting the right MT switch on robocopy and getting that copy going. This worked without an issue and I moved on to copying the files to blob storage. These files are for archive purposes, but for now we are just putting them into cool storage. I already have a storage account named 'cool' that we use for this purpose. It has all of the older data in it already. I believe when I moved it over several years ago, I used azcopy to do this. In modern times, I can just use the azure storage explorer tool. It uses azcopy under the hood (you can actually copy the command once you've started the process) so it just makes my life easy. These blobs are stored in a single folder, then in that folder there are folders numbered 000-999, then each of those folders has the same numbered folders, then under those folders are the files. For top level folders we only have numbers 000 through 017 total. I think the old system must use roughly one folder per year as we do have ~18 years of data, but I'm not certain. For our purposes, it doesnt' really matter. It just matters that we only have folders 015, 016, and 017 left on the server. 
+First thing was getting the right MT switch on robocopy and getting that copy going. This worked without an issue and I moved on to copying the files to blob storage. These files are for archive purposes, but for now we are just putting them into cool storage. I already have a storage account named 'cool' that we use for this purpose. It has all of the older data in it already. I believe when I moved it over several years ago, I used azcopy to do this. In modern times, I can just use the azure storage explorer tool. It uses azcopy under the hood (you can actually copy the command once you've started the process) so it just makes my life easy. These blobs are stored in a single folder, then in that folder there are folders numbered 000-999, then each of those folders has the same numbered folders, then under those folders are the files. For top level folders we only have numbers 000 through 017 total. I think the old system must use roughly one folder per year as we do have ~18 years of data, but I'm not certain. For our purposes, it doesnt' really matter. It just matters that we only have folders 015, 016, and 017 left on the server.
 
+015 and 016 have actually previously been copied, but as that was several years ago, I went ahead and mirrored those up to db01 anyway, and then i'll just deal with duplicates when using azure storage explorer. There is an upload button in this tool:
 
+![image](https://user-images.githubusercontent.com/7390156/159946274-ea7ef4d7-f985-4105-9631-dd6077d759f8.png)
+
+So I just went into the root folder as this is where I have all of the numbered folders. Hit the upload button, and then picked the 015 folder first and uploaded it to the root. I picked the default values as these were fine for me. By default I already have this container set to cool. 015 processed and said only 1 new file. It pops up with a question on duplicates and I chose the option to basically not upload duplicates. Same process with 016 and there were no new files, then with 017 which had all new files.
+
+See screenshgot below. `doclink` is the name of the storage container (the software we're archiving from is called doclink) and the F: path is from the db01 where I am running this process.
+
+![image](https://user-images.githubusercontent.com/7390156/159947272-cd77ad1c-d200-485a-be27-23c3d0e3fb6f.png)
+
+I then pulled statistics on these three folders to make sure the file count was the same as on db01. You can pull statistics by going into the folder and hitting the appropriate button. See screenshot:
+
+![image](https://user-images.githubusercontent.com/7390156/159948261-4014ff8f-7be9-4ed5-8723-fa3458e8d39c.png)
+
+And here are the statistics results:
+
+![image](https://user-images.githubusercontent.com/7390156/159947762-f204515c-9571-499d-a242-a480e8c901f6.png)
+
+And then I simply right clicked on each folder on db01 to get a count:
+
+![image](https://user-images.githubusercontent.com/7390156/159948702-3437eb5f-ccba-4e36-8527-372a9756f296.png)
+
+Everything matches, so yay, this part is done. Files are moved.
+
+On the original server, Folders 015 and 016 were moved to another location so they don't show up in the app any longer. Just in case there are some kind of versioning updates or anything, I just want to minimize that. When a file is not there, the app will toss an error with the file name and we simply go and retrieve that out of cool storage. This is already an existing practice so nothing that will cause any unforseen experiences. 017 is left as I'll probably go back later and take one last look to see if anyone snuck a document in somehow as we have not completely disconnected all scanners, just repointed to them to the new system.
+
+While this was going on, I was also working on the database migration. This part was relatively straightforward as well, I simply opened up management studio on db01 and picked the deploy to azure task. We have moved a number of databases to azure sql over the years, and this is generally how I do this.
+
+![image](https://user-images.githubusercontent.com/7390156/159950866-8c1b6b1b-d68b-45d9-8fe2-a690f7ed7452.png)
+
+There were a number of logins and linked servers and other references that failed when I tried initially. This is kind of normal for older servers as these things may be busted and not working already, but not throwing any errors since the server may have light use or some other situation like ours. I just deleted all of these objects and then the process went off without an issue. This process did take quite some time, but finished by the evening without issue.
+
+I also copied the original .bak file to the cool storage and set it to archive. There isn't a real reason to think that we'll need this original file, but just in case this will be much easier than trying to retrieve tapes as that is where the old servers backups went. Very minimal cost for a tremendous reduction in headache should we need it in the future since we would do the same thing and just copy it to a temp server and restore it for whatever reason.
+
+Azure SQL was made premium for the transfer, and then it was reduced in size and the database was moved into our sql pool so we could give up that instance. This database is also going to be removed eventually, but this way I can work with sql for now and we can drop the temp sql server.
+
+Plan for the next day:
+
+1. kill db01
+2. move data to azure table
+
+#### Day 4
+
+So first thing I did on Day 4 was start writing this blog post. I had already intended to keep a running narrative, but I realized I was on Day 4 and just had notes of what I was doing which isn't exactly what I wanted to do originally. So I caught up to here. =)
 
 
 
