@@ -45,6 +45,61 @@ To that end, the current plan is something like this:
 
 ### What happened?
 
+As the new system is already in place and I'll probably have to manually reconcile some delta for some reason, I imagine my plan will likely get tweaked a little while I'm doing the actual work. Especially since I have not decided on the final solution for how to index things. So here's what actually happened. Basically my notes on things as I went through the process.
+
+#### Day 1
+
+Initial day was spent analyzing current state and coming up with some of my initial plans. Getting access to the current server, examining the data that we had out there. Looking at some options for target state. Looking at what we had on Azure already for this. Even looking at possibly using some OCR solutions to perhaps auto index this. In the end. I went with the most simple approach of just trying to move the blobs and setup what was minimally required to replace the current solution.  It's a lot of documents and I really need to keep the work time down as low as possible as well as the cost so, let's get on with things!
+
+Initial high level plan after this day:
+
+- Stage Data
+  - Copy SQL to Cloud
+    - Temporarily created sql VM
+      - Patch, etc, blah
+    - Copy up the .bak file
+    - Restore the file to db
+  - Copy Files to Cloud
+    - Robocopy to temp server (in progress)
+    - Move into azure storage
+- Build replacement
+  - Prepare data if required
+  - Build solution on top of data
+
+
+#### Day 2
+
+Create temporary sql server. I simply searched for sql and picked the most recent windows server with the latest version of sql. I called this server DB01
+
+snip from the export template:
+
+```
+"hardwareProfile": {
+    "vmSize": "Standard_DS12"
+},
+"storageProfile": {
+    "imageReference": {
+        "publisher": "microsoftsqlserver",
+        "offer": "sql2019-ws2022",
+        "sku": "sqldev-gen2",
+        "version": "latest"
+    },
+```
+
+As soon as it was up, there seemed to be some windows updates. So I did those and restarted. Then I went and grabbed the RDP file for download. I'm using a mac and have the microsoft rdp app to use for this.
+![image](https://user-images.githubusercontent.com/7390156/159936739-ee042d8b-b6d0-4637-901d-8bd5fd583509.png)
+
+I opened RDP with no issues and just start>run and typed in the UNC of the source server, authenticated, and dragged the file over to the data drive on the new server. The backup file was about 100GB, so I didn't bother with any other fancy copy commands with auto-resume or something as I expected it to work fine in relatively short order and it did. I think it maybe took ~15-45 minutes to copy or so. I moved on to some other items while that was going in the background so I didn't watch it too closely and it was done when I came back to it.
+
+Once it was done copying, I restored it to sql. I simply had to change the target file locations to match the servers drives and no issues there. I think maybe this took 30-60 minutes. As above, I just peaked on it to see it was still going from time to time and that's about it.
+
+The new SQL server had, by default, ~1TB data and log drives so plenty of room for my purposes. We have ~4 or 5TB total blob data, but there is only ~0.5TB left on the active server as everything else has already been archived to Azure previously. 
+
+To copy the files, I simply used robocopy to mirror the source folder using something like this: `ROBOCOPY \\sourceserver\sourceshare\docfolder f:\docfolder /MIR /MT:128`.
+
+##### Summary
+
+Initially I forgot to put the MT flag and it ran all night and only copied about 5% of the data. So the next morning I remembered I should do that so stopped the command and ran it again with 128 threads. It uses 8 threads by default. Just doing that increased the speed by about 10x for the copy and it finished in about an hour or two the next morning I believe.
 
 
 stub post copied below for editing. =)
