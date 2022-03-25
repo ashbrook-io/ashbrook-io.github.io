@@ -288,10 +288,14 @@ After some more fiddling around, I finally noticed that the indexes that were na
 
 ...later that night...
 
+Rebuilding the main index took ~4 hours. Once this was finished I removed all of the indexes that weren't the PK or clustered. This brought our space used down to ~13GB. That's more in line with where I was wanting to get to. I really only think we need about half of that as it is at most, but mostly was just wanting to squish down so i could reduce the pool size to normal.
+
+A quick google shows that dbcc is still [the way](https://docs.microsoft.com/en-us/azure/azure-sql/database/file-space-manage#shrink-large-databases) to go so I checked the files (only one for this db) and ran a shrink with a target of 30GB. This took about 2 hours, but when done I was able to resize the pool and that ticks the box for me.
+
+Plan for the next day is continued. Since it's very late, I'll probably change it some tomorrow based on what went on today. =)
 
 
-
-
+#### 5
 
 
 
