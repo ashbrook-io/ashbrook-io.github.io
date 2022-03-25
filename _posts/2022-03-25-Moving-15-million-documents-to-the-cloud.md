@@ -297,6 +297,14 @@ Plan for the next day is continued. Since it's very late, I'll probably change i
 
 #### 5
 
+Data transforming hell. =) I am leaning more towards putting this database into cosmos db at this point, but I don't want to have 100 million objects with empty properties as many of these don't have the same properties, so I need to clean things up a bit more and squish down a bit more. This, unfortunately, takes a lot of time with this many rows. After some manipulation, our final table has just over 15 million documents and about 10 properties per document on average.
+
+Due to the way I was working on this, I did end up spinning back up the DB server so I could work on the pool as well as doing some additional work on the VM because they wouldn't share resources. I didn't run into anything that seemed to be performance bottleneck'ed on the pool, but since i had another box I just spun it up since they don't touch each other at all.
+
+I'm not 100% sure on how to convert this to json and do it with this many documents and have the performance reasonable quite yet... time will tell I suppose.
+
+
+
 
 
 
