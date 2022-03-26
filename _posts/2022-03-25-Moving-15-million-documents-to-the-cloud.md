@@ -322,6 +322,56 @@ and (k=2 and cast(v as int) > 1000)
 
 In theory, there will be a form where there are some search boxes with different k ids (using friendly names) which is what the users experience in the old system. I just feel like I'd rather this was in a nosql setup where we just store the json objects. Ultimately, if I pull this data through a service, it will end up in json so I feel like I could cut out the middleman by just storing it and indexing it that way. This is a pretty simple use-case, but one of the issues then is naming the properties which I'd also like to do. Right now it's just integers for the key names since they reference pk values in the old system. But the benefit of this is that the property names can be called anything, but we sacrifice the stored object readability. I have been thinking about this all week and I think the risk of wanting to rename the property name, and then having to update 15 million objects seems like too great of a risk since the property name can just stay as part of the UI. I am not in love with self describing data as a rule, but in this case I kind of feel like it would be nice.
 
+Another benefit (to me) of moving to cosmos (or some other nosql) is that I can just query that directly. Otherwise I'll need some service to get the sql data for the SPA. Using nosql I believe I can just go client first once all the auth is done with azuread/o365.
+
+I decided I wanted to convert the data to json at a minimum. Due to the amount of rows, I was looking for a quick way to eliminate all of the properties that didn't exist for individual items. This is kind of turnkey with a table holding key value pairs for some id, but since I wasn't sure which properties were missing, the easiest way seemed to be to create a giant pivot table with all of the columns, and then I could use for xml auto to eliminate all of the nulls automatically. So to that end, I ran something like this:
+
+```sql
+select
+	t.id
+	,[1] = (select top 1 v from t0 tt where tt.id = t.id and k=1)
+	,[2] = (select top 1 v from t0 tt where tt.id = t.id and k=2)
+	,[3] = (select top 1 v from t0 tt where tt.id = t.id and k=3)
+	--... etc for about 50 different rows
+  -- I generated these values with this
+  --   select ',['+kt+'] = (select top 1 v from t0 tt where tt.id = t.id and k='+kt+')' from
+  --   (select distinct k,[kt]=cast(k as varchar(2)) from t0) x order by k
+into
+	t0w --i labeled this t0 'wide' in my head
+from
+	t0 t
+group by
+	t.id
+
+```
+
+I feel like there is a better way to do this looking at some of the newer agg and json functions for sql, but I only need to run this once so after searching around and messing around partially the last couple of days looking at that stuff while doing other things, I opted to just do this. There are some functions in the data factory that also seem to be specifically built for somet things like this, but, again, this is one time so... seems like overkill when I can just fire this off and come back to it later.
+
+After this table is done, I can create a table that holds all of the json objects like:
+
+```sql
+select * into t0json from t0w for json auto
+```
+
+You may wonder why create an additional tables since this is a one off. But while I was working on this, I sometimes wanted to test something and have several different next steps or just examine the data in stages. It was way easier to just put it into next step tables so I could come back to it later.
+
+...time passes while insert runs...
+
+I should say this was the initial insert for the normalized table. This table was actually pretty small. i did insert this into a second table using this sql to just get the json:
+
+```sql
+--took about 7 min
+select o=(select * from t0w aa where aa.id = a.id for json auto) into t0wj from t0w a
+```
+
+and these were the sizes:
+
+![image](https://user-images.githubusercontent.com/7390156/160253990-34e155e1-83b2-4926-807a-f4d7db149b6a.png)
+
+I realize it's not a huge difference, but iw as surprised that the id,k,v table was so much larger than the normalized table. Not terribly shocked that the json table was much bigger just because lots of kind of redundant text. but those null values dont' even exist in the base taable so was kind of surprised. i'm ignoring the index really and just talking about the data size here currently. 
+
+
+
 
 
 
