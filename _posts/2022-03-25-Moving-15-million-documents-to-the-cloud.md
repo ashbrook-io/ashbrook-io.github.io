@@ -303,8 +303,24 @@ Due to the way I was working on this, I did end up spinning back up the DB serve
 
 I'm not 100% sure on how to convert this to json and do it with this many documents and have the performance reasonable quite yet... time will tell I suppose.
 
+#### 6
 
+It is now a Saturday, so I could just put this on the shelf, but I have a hard time letting go of tasks that may need to run in batch over a long period of time when there is a weekend. So I took some more time to work on this. A big part of what I was thinking about was whether I wanted to go nosql with this dataset. I was leaning in this direction just due to the sporadic use of this data and the fact that nosql was kind of in vogue to a degree.
 
+The dataset itself has been boiled down to a single table of index data for the files. FileID, Key, Value is basically the setup. Imaginatively using names of id,k,v. =) This table has 145million rows and takes up about 7GB. So, nothing crazy, but lots of rows. It is simply enough to just add search terms and filter things and this works, but is not particularly satisfying.
+
+some sample sql where I call the table t0:
+```sql
+select * from t0 where id in (
+select id from t0 where
+(k = 2 and v like '123%')
+and (k=2 and v = '1230')
+and (k=2 and cast(v as int) > 1000)
+--add more criteria as needed
+)
+```
+
+In theory, there will be a form where there are some search boxes with different k ids (using friendly names) which is what the users experience in the old system. I just feel like I'd rather this was in a nosql setup where we just store the json objects. Ultimately, if I pull this data through a service, it will end up in json so I feel like I could cut out the middleman by just storing it and indexing it that way. This is a pretty simple use-case, but one of the issues then is naming the properties which I'd also like to do. Right now it's just integers for the key names since they reference pk values in the old system. But the benefit of this is that the property names can be called anything, but we sacrifice the stored object readability. I have been thinking about this all week and I think the risk of wanting to rename the property name, and then having to update 15 million objects seems like too great of a risk since the property name can just stay as part of the UI. I am not in love with self describing data as a rule, but in this case I kind of feel like it would be nice.
 
 
 
