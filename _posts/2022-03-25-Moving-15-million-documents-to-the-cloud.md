@@ -370,6 +370,18 @@ and these were the sizes:
 
 I realize it's not a huge difference, but iw as surprised that the id,k,v table was so much larger than the normalized table. Not terribly shocked that the json table was much bigger just because lots of kind of redundant text. but those null values dont' even exist in the base taable so was kind of surprised. i'm ignoring the index really and just talking about the data size here currently. 
 
+I also noticed after i was done that I should add the `, WITHOUT_ARRAY_WRAPPER` option as well, although that didn't reduce the size much. ~60MB on the t0wj table.
+
+I decided to import this just using a file. I pulled the Azure Cosmos DB Data Migration Tool for this.
+
+<img width="560" alt="image" src="https://user-images.githubusercontent.com/7390156/160255799-efa96343-3151-475e-b550-70fa520d2c44.png">
+
+This took about 20 minutes, but not too bad in the grand scheme of things.
+
+I basically ran the same thing to do the import and this also tooka bout 20 minutes. Worth mentioning that I am running this on my sql vm on azure itself, so maybe that would have been slower if I was not on azure already.
+
+
+
 
 
 
