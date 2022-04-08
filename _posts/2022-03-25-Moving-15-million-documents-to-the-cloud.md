@@ -443,7 +443,64 @@ This server is in a.... somewhat unusual networking setup, so I think this could
 
 To this end, I decided to, instead just load this stuff up on a docker instance so I could just work on this locally. I haven't re-installed docker since switching over to a mac, so... two birds. =)
 
+First I installed docker by following the directions on the website, then headed to the MS page to get latest instructions on running a local sql:
+https://docs.microsoft.com/en-us/sql/linux/quickstart-install-connect-docker?view=sql-server-ver15&preserve-view=true&pivots=cs1-bash
 
+Note I'm using \` instead of \\ below because I happened to run this in pwsh on the mac. I grabbed a random password from the lastpass site here: https://www.lastpass.com/features/password-generator but you could just make one up.
+
+```
+PS /Users/roy/gh/d> sudo docker pull mcr.microsoft.com/mssql/server:2019-latest
+Password:
+2019-latest: Pulling from mssql/server
+ea362f368469: Pull complete 
+dc034f624aa1: Pull complete 
+cafda714f10f: Pull complete 
+c6af4ce68233: Pull complete 
+2e5e63d166b4: Pull complete 
+Digest: sha256:fb5277e7a3cc53f7d2230ed089ed60849f79567ebb0aae8f41ceb85879e9e09d
+Status: Downloaded newer image for mcr.microsoft.com/mssql/server:2019-latest
+mcr.microsoft.com/mssql/server:2019-latest
+PS /Users/roy/gh/d> sudo docker run -e "ACCEPT_EULA=Y" -e "SA_PASSWORD=NdFe!Vtb" `
+>>    -p 1433:1433 --name sql1 --hostname sql1 `
+>>    -d mcr.microsoft.com/mssql/server:2019-latest
+WARNING: The requested image's platform (linux/amd64) does not match the detected host platform (linux/arm64/v8) and no specific platform was requested
+06a71cabea6fc1ef3fe0df294dde302ab2dd9da8873a38996a8e111231d5adad
+PS /Users/roy/gh/d> 
+```
+
+ok.. so that makes sense. =) a google search later and I have this page:
+https://database.guide/how-to-install-sql-server-on-an-m1-mac-arm64/
+
+```
+PS /Users/roy/gh/d> docker pull mcr.microsoft.com/azure-sql-edge
+Using default tag: latest
+latest: Pulling from azure-sql-edge
+976e4515cbe3: Pull complete 
+1f73897c23c8: Pull complete 
+b4ff7ff6a52b: Pull complete 
+b66501766227: Pull complete 
+9fd306fd7e2d: Pull complete 
+129b56f5ef99: Pull complete 
+56de8af9a702: Pull complete 
+3cce2408ea6b: Pull complete 
+48dbc293ce87: Pull complete 
+c04c7c72b2fa: Pull complete 
+3ca071310af7: Pull complete 
+Digest: sha256:7c203ad8b240ef3bff81ca9794f31936c9b864cc165dd187c23c5bfe06cf0340
+Status: Downloaded newer image for mcr.microsoft.com/azure-sql-edge:latest
+mcr.microsoft.com/azure-sql-edge:latest
+PS /Users/roy/gh/d> sudo docker run -e "ACCEPT_EULA=1" -e "MSSQL_SA_PASSWORD=NdFe!Vtb" `
+>> -p 1433:1433 --name sqledge --hostname sqledge `
+>> -d mcr.microsoft.com/azure-sql-edge
+Password:
+c891e6d22bfb1a5011cb64053bfb8b39f538b543aea9bc6d31394bfaf87612b0
+PS /Users/roy/gh/d> docker ps
+CONTAINER ID   IMAGE                              COMMAND                  CREATED         STATUS         PORTS                              NAMES
+c891e6d22bfb   mcr.microsoft.com/azure-sql-edge   "/opt/mssql/bin/perm…"   4 seconds ago   Up 3 seconds   1401/tcp, 0.0.0.0:1433->1433/tcp   sqledge
+PS /Users/roy/gh/d> 
+```
+
+So that seemed to work. Azure data studio connecting to server `.` with sa and the password given gets us hooked up. Nice.
 
 
 
