@@ -374,11 +374,76 @@ I also noticed after i was done that I should add the `, WITHOUT_ARRAY_WRAPPER` 
 
 I decided to import this just using a file. I pulled the Azure Cosmos DB Data Migration Tool for this.
 
-<img width="560" alt="image" src="https://user-images.githubusercontent.com/7390156/160255799-efa96343-3151-475e-b550-70fa520d2c44.png">
+<img width="470" alt="image" src="https://user-images.githubusercontent.com/7390156/160256103-0ee1a279-7e0b-4dc1-b2b7-adda7aa0c48f.png">
 
-This took about 20 minutes, but not too bad in the grand scheme of things.
+Interesting. I did check the prettify and compress... maybe this number has to do with that? Let's see what's going on if I import this. =)
 
-I basically ran the same thing to do the import and this also tooka bout 20 minutes. Worth mentioning that I am running this on my sql vm on azure itself, so maybe that would have been slower if I was not on azure already.
+<img width="443" alt="image" src="https://user-images.githubusercontent.com/7390156/160260128-5721024e-11f1-4f22-b307-e75286485c07.png">
+
+Took a bit longer, but still nothing crazy. =) This seemed great, except it appears that each record was imported as a single property of the object. So instead of something like this:
+
+```json
+{
+	"id":"myid01",
+	"1":"val1",
+	"2":"val2"
+}
+```
+
+we ended up with something like this:
+
+```json
+{
+	"id": "edfeb95b-5162-4a35-8a62-dd6838cf1dc6",
+	"JSON_F52E2B61-18A1-11d1-B105-00805F49916B": "[{\"id\":\"myid01\",\"1\":\"val1\",\"2\":\"val2\"}]
+}
+```
+
+I was just running this while I was doing other stuff around the house on the weekend, so apparently whatever I clicked on didn't do what I expected. Time to try again it seems. =P
+
+So this time I looked under advanced and updated some items differently. I also used the table that already had the pregenerated json data. The first time I did a for json auto, basically the same way I built the first query.
+
+<img width="534" alt="image" src="https://user-images.githubusercontent.com/7390156/160260459-782f8788-ff68-4979-ae86-0465c8d56c3a.png">
+
+...time passes while i fiddle with things...
+
+After several iterations fiddling around with this, I thought I needed a clean start. What seemed to happen is the data migration tool would let me export and have null values, or if i exported and turned it into json on the way out, it would then embed it again into another json structure like above.
+
+I had originally discarded the idea of partitioning the data by key, although that would be the best way to split things out, i believe. The idea, in my mind, was that i didn't think the cost would matter much and i don't really need to partition to scale just due to the nature of this app. So i felt that doing a slightly more costly search, but getting back all of the data in one shot would be better. After fiddling with things a bit, I was seeing that it might be a little smoother to just import all of my data and partition by the key name so there would be key partitions with an id and a value in it. Then to see all of the meta data, would have to go back and query for the id across all of the partitions, but maybe that's fine. In my case, the use is so light it didn't seem to really matter much.
+
+I could also just write some powershell or something to extract the records and then dump each one into a json file that already looked like I wanted and then import it. When I did my initial test, I did something like that and I just imported that one small file, but after restructing the data a few times while testing, I wasn't really at that place anymore.
+
+While working on this, I noticed that one of the text fields had dates in it that were formatted like MM/dd/yyyy. These / characters were all being escaped in the json and there was a date value previously in use that had date values in another table. I converted those all to yyyy-MM-dd when importing this, so I decided I should probably clean those values up just to get things consistent.
+
+To, hopefully, make this a little quicker I did a quick check on what k values seemed to match these dates `select k, count(*) from t0 where v like '%/%/%' group by k` then took a look at the values to make sure they were dates by doing something like this for each of the k values that popped up: `select distinct v from t0 where k = 2 and v like '%/%/%'`. Some of these things weren't dates, just values with slashes in the value. Some of them were dates, but they had the date/time in them but the times were all midnight times. I'm guessing this is just based on some indexing that changed in the past. The times aren't needed since the users always only search by dates and I think they maybe can't even find these unless they know the text format to use for the search since these values were actually stored as text. Not sure why, I'm guessing it just worked out that way, so we can make it consistent now.
+
+I updated all of these date values like so:
+
+```sql
+update t0
+set v = format(cast(v as date),'yyyy-MM-dd')
+where k in (1,2,3) and isdate(v) = 1 and v like '%/%/%'
+--note that k values were set to whatever value i wanted to update at the time
+```
+
+... several weeks pass...
+
+###7
+
+After some other priorities jumped the line, I was able to make it back to this project. *UNNNNNNNN*fortunately it seems that my server got deallocated and I ran into some odd issues turning back on the azure vm. There were a couple, but mostly they seemed to really be something like this:
+
+```
+rashbrook@Azure:~$ az vm start --resource-group Servers --name db01 --subscription myid
+(BadGatewayConnection) The network connectivity issue encountered for 'Microsoft.Compute'; cannot fulfill the request.
+Code: BadGatewayConnection
+Message: The network connectivity issue encountered for 'Microsoft.Compute'; cannot fulfill the request.
+```
+
+This server is in a.... somewhat unusual networking setup, so I think this could have something to do with this as there were some other changes in place. After fiddling with this in the background for about a half a day, I decided it really didn't matter because it's probably worth it to me to go back and review things and reset. There are some other fields that I think I will integrate anyway after some side conversations with some of the users over the last couple of weeks anyway.
+
+To this end, I decided to, instead just load this stuff up on a docker instance so I could just work on this locally. I haven't re-installed docker since switching over to a mac, so... two birds. =)
+
+
 
 
 
