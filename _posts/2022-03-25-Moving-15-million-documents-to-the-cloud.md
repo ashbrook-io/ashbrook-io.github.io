@@ -502,6 +502,134 @@ PS /Users/roy/gh/d>
 
 So that seemed to work. Azure data studio connecting to server `.` with sa and the password given gets us hooked up. Nice.
 
+While I was doing that, I also jumped on the main server as I had decided I would retool my export to include some of the root properties of the document record itself. The way the data is stored in the system is there is a 'document' and the document has a file. The document could be updated, tied to work flow, and have dynamic properties assigned to it by type, etc, in the old system. In our case, we just need to retain the properties of this document along with the file name so we can locate the blob if we need to later. To do this, I created a unifying query that would simply place all of the properties into a simple table with the columsn of id, k, v for the document id, the property key (a property id), and a value.
+
+I'd love to convert this right into a json object, I think, but unfortunately the original system is sql 2008 and doesn't have for json. So I'm just going to convert it as noted and export a csv file so I can get what I need off the box. I'm also going to do this by year as I can then move onto the UI and come back and do the export/conversion later for older years. SQL I used below:
+
+```sql
+-- issue/honor no locks and be the deadlock victim if needed
+set transaction isolation level read uncommitted;
+set deadlock_priority -10;
+set nocount on;
+
+;with d as (
+	select
+		  [id] = DocumentId, Created, Modified, DocumentTypeId, [PageCount]
+	from Documents where YEAR(created) >= 2020
+)
+--new property id for created as utc
+, p70 as (
+	select
+		  [id]
+		, [k]  = 70
+		, [v]  = cast(convert(varchar(19),DATEADD(minute, DATEDIFF(minute,getutcdate(),getdate()), [Created]),127) as varchar(50))
+	from d
+)
+--new property id for modified as utc
+, p71 as (
+	select
+		  [id]
+		, [k]  = 71
+		, [v]  = cast(convert(varchar(19),DATEADD(minute, DATEDIFF(minute,getutcdate(),getdate()), [Modified]),127) as varchar(50))
+	from d
+)
+--new property id for DocumentTypeId 
+, p72 as (
+	select
+		  [id]
+		, [k]  = 72
+		, [v]  = cast(DocumentTypeId as varchar(50))
+	from d
+)
+--new property id for [PageCount] 
+, p73 as (
+	select
+		  [id]
+		, [k]  = 73
+		, [v]  = cast([PageCount] as varchar(50))
+	from d
+)
+--new property id for DocumentStoreFileID, aka the file name 
+, p74 as (
+	select
+		  [id]
+		, [k]  = 74
+		, [v]  = cast(DocumentStoreFileID as varchar(50))
+	from d join DocumentFiles v on v.ParentId = d.id
+)
+, pdv as (
+	select
+		  [id]
+		, [k]  = PropertyID
+		, [v]  = cast(convert(varchar(19),DATEADD(minute, DATEDIFF(minute,getutcdate(),getdate()), PropertyDateValue),127) as varchar(50))
+	from d join PropertyDateValues v on v.ParentId = d.id
+)
+, pfv as (
+	select
+		  [id]
+		, [k]  = PropertyID
+		, [v]  = cast(PropertyFloatValue as varchar(50))
+	from d join PropertyFloatValues v on v.ParentId = d.id
+)
+, pcv as (
+	select
+		  [id]
+		, [k]  = PropertyID
+		, [v]  = cast(PropertyCharValue as varchar(50))
+	from d join PropertyCharValues v on v.ParentId = d.id
+)
+, m as (
+select * from p70 union all
+select * from p71 union all
+select * from p72 union all
+select * from p73 union all
+select * from p74 union all
+select * from pdv union all
+select * from pfv union all
+select * from pcv
+)
+select * from m
+order by id,k
+```
+
+We stopped putting most documents in this system in mid 2019, so there are much fewer items to extract from 2020 onward. I went ahead and did some extracts for some additional years as well, below is a screenshot of the 2018 year which is more 'normal' in size.
+
+![image](https://user-images.githubusercontent.com/7390156/162529060-838e3d5f-6e14-4308-92cd-c4957119e19d.png)
+
+I simply used the import/export wizard for this. Basically standard flat file export, select csv for export, named the csv with the year, put `"` as the text qualifier, and check the 'columns in first row' box. Not the fastest thing, but I really only needed the first one and just ran the years prior to 2020 to see the export sizes. But now that they're done so.... I mean may as well use them. I had planned to do some other cleanup or something in SQL, but now I have these flat files, and they only took about 2 min or so to export a piece per year.... I think I can just import these as azure tables and..... maybe that's the way to go just to make my life easy haha. I think cosmos has a slightly better model, but there are no more than 10 people probably that will ever search this so.... it likely doesn't matter at all. I'd rather have a document database with 15 million objects than a 3 column table with just the key value pairs that has 150 million rows, I think, but hard to know which is best without testing.
+
+All the info I can find online seems to be more geared towards a more holistic solution vs just archiving and searching the meta data, so I'll play it by ear for the moment. I could also just dump it into a sql db and write a very traditional app of any flavor to search the one table.
+
+I had to get on a phone call, so while I was on there I went ahead and exported the data for the previous 10 years which is all that anyone really *wanted* to keep, although we did have data going back another 5 years. I believe there was a previous purge of the existing system based on some missing files, so some of that old index data is no good anyway. I'll just stick with this for now. We do have backups of the entire system in the event there is some emergency and we need to go and grab a full restore. Each *full* year was about 450MB of csv data with the prior 3 years taking up only ~20MB total.
+
+Unfortunately, this server is old enough that it seems the azure portal doesn't work via the web and I can't update the browser anymore. Understandable. =) So I had to copy the files down to my local machine next. I am interested in seeing what type of memory consumption doing a powershell read on one of these 500mb csv files will produce. Copying the 4GB files down over VPN took about 30 min. There is a lot of waiting on things to finish with this sort of thing. =P
+
+...time passes while I import data...
+
+###8
+
+After importing data for a day or so, all the data was in cosmos. This was just checking every couple of hours or so tops and picking a new file. I only had 10 years to do, so this was just some time spent popping onto my computer over the weekend. Unfortunately, the data for azure tables is just way too slow on the import. So I'm going to nix that for now. This day was the final imports and also my db01 server returned to service, so I hopped on there to see if migrating from a cloud csv into azure tables was going to be faster. Sadly, I was already done with the 2020s and 2019 and the next year back was ~20x the size. Since this was indicative, anyway, of the rest of the years to import, I tried doing that on the azure sql box using the azure storage tool. Long story short, it just would not ever open in that tool, so I couldn't start the import. Since it took _days_ to do the tiniest year from my computer outside of the azure network, I just decided to drop this. I did try quite a few times and rebooted and patched and tried other various things, but the tool just could not seem to handle the csv file which was 400MB in size. There were only 3 columns an id, a property id, and a value. I basically used the id as the PartitionKey, the propertyid as the RowKey, and then the value was set per row. This worked fine with the smaller years, but it would not even open the larger files to show the preview.
+
+Maybe there was a way to do this without showing a preview, but as I was already completely finished with all 10+current years import for cosmos, I just tabled this for now and moved on to my next step which was importing a copy of the id,k,v structure into azure sql. I still have room on the pool for storage under the current plan, so this wasn't going to cost anything extra and it took up about 8GB of space. Theh cosmos db took up just under 10GB of space, so not a major storage size difference moving to cosmos. I suppose if the data was 100x bigger, maybe that would make a difference. Fortunately for this solution, I think this will be fine probably forever. Considering this is 10 years of data.
+
+###9
+
+Now that all of the data was uploaded, It was time to write some code to actually pull the data out and do some cleanup. To finally cleanup, I wiped the sql vm in the cloud and wiped the full backup duplicate azure sql database. I still have the replica of the id,k,v table on azure sql, but I at this point I expect to use cosmosdb for this purpose. I also still have an azure table with a small subset of the data for possibly doing some prototyping on. It is not as if we could *not* put data into azure tables slower, there just doesn't appear to be any value to it vs sql or cosmos so I'm not going to worry about it for now. Ideally, I'm hoping to just publish this solution on GitHub, but we'll see.
+
+While I'm not 100% sure exactly what framework or platform I'm going to use, for starting I just wrote some node scripts to query the db, and then retrieve a file. The important packages for this were:
+
+```
+"@azure/cosmos": "^3.15.1",
+"@azure/storage-blob": "^12.9.0",
+```
+
+...time passes for prototyping and development.
+
+
+
+
+
+
 
 
 
