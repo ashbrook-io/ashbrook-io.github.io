@@ -612,6 +612,8 @@ After importing data for a day or so, all the data was in cosmos. This was just 
 
 Maybe there was a way to do this without showing a preview, but as I was already completely finished with all 10+current years import for cosmos, I just tabled this for now and moved on to my next step which was importing a copy of the id,k,v structure into azure sql. I still have room on the pool for storage under the current plan, so this wasn't going to cost anything extra and it took up about 8GB of space. Theh cosmos db took up just under 10GB of space, so not a major storage size difference moving to cosmos. I suppose if the data was 100x bigger, maybe that would make a difference. Fortunately for this solution, I think this will be fine probably forever. Considering this is 10 years of data.
 
+I also stopped by local sql docker instance as I wasn't using it. Doesn't matter much, but it was a loose plot thread here I thought I'd tie up =P The reason for this was just that since db01 popped back up finally, I just did the data manipulation there and I already had wanted to test the import from that box since it was already *in* Azure. That box was deallocated, and I think that on startup I was just getting not helpful errors all along the way while it was spinning up. I didn't do anything other than start it and then watch it fail over and over when I was looking at it. But when I checked the next day it was back up and everything was working. I didn't go back and look at any of the job details to find more info as I'm guessing it was just something with the spin up related to not waiting and ultimately I moved on anyway. Anyway, since it was up I could do the little bit of testing and just do the sql manipulation I wanted to do on that box before deleting it instead of doing it locally. Glad I did get docker back installed for next time I need to do something similar.
+
 ###9
 
 Now that all of the data was uploaded, It was time to write some code to actually pull the data out and do some cleanup. To finally cleanup, I wiped the sql vm in the cloud and wiped the full backup duplicate azure sql database. I still have the replica of the id,k,v table on azure sql, but I at this point I expect to use cosmosdb for this purpose. I also still have an azure table with a small subset of the data for possibly doing some prototyping on. It is not as if we could *not* put data into azure tables slower, there just doesn't appear to be any value to it vs sql or cosmos so I'm not going to worry about it for now. Ideally, I'm hoping to just publish this solution on GitHub, but we'll see.
@@ -624,6 +626,37 @@ While I'm not 100% sure exactly what framework or platform I'm going to use, for
 ```
 
 ...time passes for prototyping and development.
+
+###10
+
+I like sveltejs, so I am going to start with that. I am, generally, more of a microsoft fan, but I use svelte pretty regularly for a very frequently updated project day to day, and I have not moved it to svelteKIT yet, so I think I'll go with that. To start, anyway. Current options I'm considering:
+
+1. dotnet core or blazor/wasm app
+2. sveltekit
+3. sveltejs or sveltekit in spa only mode
+4. react/vue/angular (just because i haven't made one of these in a while)
+5. something else...?
+
+Microsoft stuff was top of mind since this is, for me, all running on azure services, but after writing my test node scripts I decided to just init a sveltekit project and see how that went. In general if I was using Firebase, or Supabase (lots of tutorials lately on that) I could just handle all of the access there, I think. But in my particular case I have users who have o365 access and I want to lock everything down with AzureAD. The document repo itself is only accessible to admins currently as the previous history retrivals were specific requests for a specific file from the old system. Now that we'll be creating a new index search app, why not tie it all together with MS auth and use the services available within azure?
+
+To that end, I headed over to the cosmosdb, opened up IAM, then added some appropriate users as readers. This app has no 'write' requirement as it is just for searching the index so this is all we need.
+
+I believe I need an app registration as well, so I go and create one over there I set the following things:
+
+- single tenant, no implicit/hybrid stuff (don't click check boxes)
+- platform config to SPA (for now)
+- the redirect URI to localhost:3000 for now
+- API permissions, user impersonation for cosmos and azure storage, grand admin consent
+
+I did some fiddling on this throughout the day, but had to take care of some other things, so basically just got the sveltekit project stubbed out and got msal running and then plugged in some basic queries with env variables client side to test communication. Ran into some CORS issues to look into next.
+
+###11
+
+I was able to get over the CORS issues by specifying any source. Using localhost didn't seem to work and I found a bug resolution on cosmosdb about this that indicated you could just disable the check. For now, I just set the allowed location to * because I'm hoping these queries will actually come from the SPA vs a specific API, but we'll see.
+
+One key item for me was that our users typically just use the old system to search using what are called 'SavedInquiries' in doclink. These filter out the types of document types that will be shown.
+- 
+
 
 
 
