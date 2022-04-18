@@ -28,45 +28,20 @@ Well... first we have to build it, but the basic flow of the system. is pretty s
 
 On #2, performance should be fine as this is pretty basic. Any weirdness can be solved with indexing, but I don't expect major issues because this is static data that doesn't update. And cost will just be lower because we won't pay for the software and all estimates show this will cost dollars per year, not thousands for our usage. On cost you may think 'oh... are you one of those labor is free people? because it still takes time to migrate!!!' and you would be right to ask that, but wrong on the labor is free. Although from a business perspective, they probably wouldn't worry about this in terms of prioritization, the reality is that this machine is running on some of our last bits of hardware to be removed from an old data center. We already had backups so the plan for some time has been 'if this physical machine breaks, we'll migrate to the new thing'. This is 'the new thing' in that description. The physical machine hasn't broken, but we are at the time to sunset it, so yay! In short, we can't 'do nothing' anyway because we need to empty the data center. =)
 
-So, now we know what to do functionally, but what do we build it on? React? Supabase is hot! Azure functions, lambda, blah blah? Well, for this I generally look at where I am now. I am a one man band for software work here currently, so I try not to stray too far from what we have. Currently our environment for custom code consists of some legacy apps we wouldn't copy, dotnetcore apps, and sveltejs apps that use o365/msgraph for the service tier. 
+So, now we know what to do functionally, but what do we build it on? React? Supabase is hot! Azure functions, lambda, blah blah? Well, for this I generally look at where I am now. I am a one man band for software work here currently, so I try not to stray too far from what we have. I don't want anyone who comes after me to have to maintain C, Java, Powershell, MS Flow jobs and GO or something. Even thought I'd love to write in as many languages as possible, it's just not a great stewardship of the environment one is in. Currently our environment for custom code consists of some legacy apps we wouldn't copy, dotnetcore apps, and sveltejs apps that use o365/msgraph for the service tier. All automated jobs are in powershell. SQL is all on azure.
+
+I have now introduced a couple of variables into the equation. A database in cosmos (although there is a copy in sql) and a set of blob data in azure storage. We have had blobs on azure storage for years, but only as a cool archive that is accessible by administrative staff, not something tied to an application where a user may have an error. Also no users access that needs to be audited, etc.
+
+Some considerings for me, personally, as I work on this are that I could *probably* follow a very simple tutorial and built a blazor/wasm app in dotnet, which I have considered replacing some of our existing applications with. The other major option for me is implementing an app on sveltekit. I use sveltejs currently for one of our key internal applications, but I backend the services using some o365/msgraph magic and I think moving to a more 'traditional' setup with sveltekit would make more sense and provide a path to update the internal svelte app. This application is probably simple enough to provide some good proof-of-concept on both platforms and give some insight into how that would work.
+
+Some additional details about the environment are that our users would be using azuread for authentication anyway, and likely using rbac in some way for authorization to the app. Possibly more on that later, but ironically our dotnet apps do not use azure auth, but our sveltejs app does. =) Plus our dotnet apps use sql for backends, and the svelte app uses o365/msgraph for it's data. This was more of an organic development than planned, but I think it provides a little color on the situation.
+
+I think that's enough current state info. Now I'm going to just hop into a play-by-play of what I did.
+
+_note: I wrote this prelude/background section after a few days of the play-by-play below, so there may be some recap or extra details about info here. But I wanted to leave it as I wrote it while I was doing it and creating a narrative around this process is what I was hoping to do._
 
 
-
-
-
-
-
-
-split from previous article.
-
-#### Part 1, done. Thoughts.
-
-My original high level to do:
-
-1. Handle SQL data (Index)
-2. Handle Files
-3. Create new searcher app
-4. Turn off old machine (equipment will decomm in another effort)
-
-I found that as I was tracking this work for myself, I kind of got distracted by #3 while I was in the midst of #1 and #2. In part, I think this was largely because I thought I wanted to move to cosmos for the database access, but wanted to 'test' the azure tables approach which led to a lot of kind of back and forth mentally for me.
-
-I also had several unrelated projects jump into the middle of this that I had to handle that did not really help that back and forth. Ultimately, I pulled the tricker on cosmos, and then imported the same CSV data into azure sql as a backup if I needed to do some adhoc query of the data and didn't want to do it on cosmos for some reason.
-
-After solidifying that, Step 1 and 2 were done, and knowing Step 4 is not something I'm going to write about at all, I was left with Step 3. I moved on to doing that already, but realized I should probably cut this entry here as the problems/topics for that are completely different. Ultimately I expect that Step to boil down to 'how do i want to wrap and interact with this data in a way that makes sense to the existing users?'
-
-I think that, as with much prototyping, this process would have been faster if I had focused on 'speed'. I could have simply grabbed the 2020s data which was tiny and then started prototyping a UI. But since I already had all of the data, I instead focused on getting all of the data out there so I didn't have to address that step again. Some of this is just due to the nature of the way work flows for me currently. I may have a project bump out all current work due to a business need at any time and sometimes I have to shelve work for months. So I am always in a state of thinking about how I may need to shelve something tomorrow and try not to get things 'halfway' setup that I can't easily delete. Creating a prototype that could be orphaned for a long time isn't valuable, but getting this data 'migrated' is valuable because we *could* lose or shut down the original machine in a pinch if this project is shelved for a year because at that time this archive will be even older and have even less frequent use.
-
-That being said, if I could go back, I would rather have (from a dev standpoint) just dumped a couple years of data somewhere, prototyped away, and then wrapped things up with a '...now i just need to import the rest of the data....' type of idea. But had I used azure tables for that, I may have been sad in the future when I tried to upload all of that data though. =P
-
-Regardless, I am declaring this part 'done' and moving on. Done > Perfect.
-
-Next up, the indexing app. =)
-
-
-
-
-
-#### Day 9
+#### Day 1
 
 Now that all of the data was uploaded, It was time to write some code to actually pull the data out and do some cleanup. To finally cleanup, I wiped the sql vm in the cloud and wiped the full backup duplicate azure sql database. I still have the replica of the id,k,v table on azure sql, but I at this point I expect to use cosmosdb for this purpose. I also still have an azure table with a small subset of the data for possibly doing some prototyping on. It is not as if we could *not* put data into azure tables slower, there just doesn't appear to be any value to it vs sql or cosmos so I'm not going to worry about it for now. Ideally, I'm hoping to just publish this solution on GitHub, but we'll see.
 
@@ -77,9 +52,11 @@ While I'm not 100% sure exactly what framework or platform I'm going to use, for
 "@azure/storage-blob": "^12.9.0",
 ```
 
+I just followed the instructions for node.js on the MS site for doing the initial tests with these and fed in the queries with hand edits to test.
+
 ...time passes for prototyping and development.
 
-#### Day 10
+#### Day 2
 
 I like sveltejs, so I am going to start with that. I am, generally, more of a microsoft fan, but I use svelte pretty regularly for a very frequently updated project day to day, and I have not moved it to svelteKIT yet, so I think I'll go with that. To start, anyway. Current options I'm considering:
 
@@ -102,11 +79,52 @@ I believe I need an app registration as well, so I go and create one over there 
 
 I did some fiddling on this throughout the day, but had to take care of some other things, so basically just got the sveltekit project stubbed out and got msal running and then plugged in some basic queries with env variables client side to test communication. Ran into some CORS issues to look into next.
 
-#### Day 11
+#### Day 3
 
 I was able to get over the CORS issues by specifying any source. Using localhost didn't seem to work and I found a bug resolution on cosmosdb about this that indicated you could just disable the check. For now, I just set the allowed location to * because I'm hoping these queries will actually come from the SPA vs a specific API, but we'll see.
 
 One key item for me was that our users typically just use the old system to search using what are called 'SavedInquiries' in doclink. These filter out the types of document types that will be shown.
+
+I was able to get a basic prototype working where basically you logged in and hit a button and it would query some random collection of documents (of the appropriate type) from cosmos and display them along with a download button that you could click.
+
+This is great, but I was not using the user's credentials directly, instead I was using the application/service keys and I wanted to really use the user's credentials and rbac for managing access. But this was just the initial prototype for a simple UI with some simple details, so at least the plumbing works.
+
+As this only has limited users and no real 'roles' other than 'has access' I can just add the users directly to the app if desired, and then I could make sure all queries to get the data and blob happen on the server. This seems like the 'typical' way to do things, but I'd love to just have the users go straight to the service if I can from the client side and skip having a service tier to just relay data if possible.
+
+We currently house some data on o365 and use msgraph for this purpose in another app and it works great. But msgraph doesn't appear to have a channel to just route to cosmos or sql. Maybe I can go through a data gateway and built some other service routing mechanism in o365 but I feel like that's just making things complicated at that point. The current o365/msgraph stuff works well because it's simple because the data is on sharepoint.
+
+#### Day 4
+
+Off and on tasks bumped in front of this over the course of about a week somewhat stalling any changes. When I came back to things on a fresh monday, I was ready for a fresh start an decided I would just take a hard turn and spin up a blazor/wasm app to test things out that way. This day was mostly spent cleaning up the existing progress, bundling all of the updates/changes I had fiddled with into a PR on my repo, and putting together my planned next steps. Which *really* just amounted to 'make a blazor/wasm version of this'.
+
+At this point, I'd like to share some code here, but a lot of this prototyping I am just using hardcoded keys so I would have to clean it up. I may come back and do that and edit this in the future. =)
+
+I'm on a pretty new macbook and I haven't installed dotnet tools on here yet! So this also gives me a chance to run through some of those steps that I did.
+
+1. [Install dotnet of course!!](https://dotnet.microsoft.com/)
+
+That's it. =P Dotnet installed!
+```
+Last login: Fri Apr 15 11:53:29 on ttys000
+roy@work gh % dotnet --list-sdks
+6.0.202 [/usr/local/share/dotnet/sdk]
+```
+
+I spent a lot of time on some apps that are based on business users changing data structures. To that end, I don't typically use typescript as I am normally shuffling data through generic table handlers or using basic table/row structures that I don't want to create types for. I could, but I haven't. However, I believe everything in blazor/wasm will require typing, so maybe I'll feel like switching to typescript after this. You never know!
+
+I perform some basic steps to spin up something to open in vscode:
+
+1. create a new folder in terminal, switch to it
+2. dotnet new up an app like `dotnet new blazorserver -f net6.0`
+3. setup loca git on this code with `git init && git add . && git commit -m "initial"`
+4. open folder in vscode with `code .`
+5. vscode asked me to install some dependencies and I clicked ok
+6. open up terminal in vscode and run the app with `dotnet watch run`
+
+Now we have a running app with some sample stuff in there. 🎉
+
+
+
 - 
 
 
