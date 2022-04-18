@@ -1,10 +1,10 @@
 ---
 layout: post
-published: false
+published: true
 title: Moving 15 million documents to the cloud
 subtitle: >-
   Are we sure we don't like on-prem?
-date: '2022-04-01'
+date: '2022-04-18'
 ---
 
 Moving an image repository to the cloud is not quite what I would call turnkey. Starting up a new one is, I think, relatively simple. At the simplest you could just grab a SaaS solution that offers the capability that you want. At the most complex, you could analyze all the difference services that you want and build something yourself. Moving an existing one has an array of considerations, however. Mostly I think these can be broken down for many non-IT folks as:
