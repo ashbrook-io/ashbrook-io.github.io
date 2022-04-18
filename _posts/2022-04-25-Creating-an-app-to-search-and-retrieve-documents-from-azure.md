@@ -123,9 +123,41 @@ I perform some basic steps to spin up something to open in vscode:
 
 Now we have a running app with some sample stuff in there. 🎉
 
+Tomorrow, will be time to connect some dots on the blazor app.
+
+#### Day 5
+
+Things I did:
+
+- First thing I did was copy/paste the fetchdata page since I was going to want to fetch data, that seemed like a good place to start.
+- Rename this page to something meaningful. I think rather than having a single page with 3 buttons, I am just going to have three pages in the blazor application so they'll just pick one from the left nav bar. I'll call this one Billing for now.
+- Now that it's renamed, open up Billing.razor and change the `@page` line to use `billing` instead of `fetchdata`
+- Open up shared/navmenu.razor and copy/paste the fetchdata link (or whatever you want) and update it to go to billing and have the right label.
+
+Now the page shows up. 🎉
+
+_note: I could also run a `dotnet` command to generate this, but i just copied it and will work that way for now.
+
+Ran `dotnet dev-certs https --trust` and restarted app so I don't get warnings on local https.
+
+Added `dotnet add package Newtonsoft.Json` so i can support handle cosmos data. It's right about here that I start to whistfully think about just using the old sql database and generating code. Sadly, it seems that cosmos doesn't support generating the model or any classes. So I just write a little sql code to generate this big class with newtonsoft decorations. Data output looks similar to this:
+
+```csharp
+namespace Data
+{
+  using Newtonsoft.Json;
+
+  public class SearchResult
+  {
+    [JsonProperty(PropertyName = "1")] public string? x { get; set; }
+    [JsonProperty(PropertyName = "2")] public string? y { get; set; }
+    [JsonProperty(PropertyName = "3")] public string? z { get; set; }
+    //etc etc x ~60 properties
+```
 
 
-- 
+
+
 
 
 
