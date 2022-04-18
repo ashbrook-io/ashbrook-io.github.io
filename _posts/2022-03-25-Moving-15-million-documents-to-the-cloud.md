@@ -295,7 +295,7 @@ A quick google shows that dbcc is still [the way](https://docs.microsoft.com/en-
 Plan for the next day is continued. Since it's very late, I'll probably change it some tomorrow based on what went on today. =)
 
 
-#### 5
+#### Day 5
 
 Data transforming hell. =) I am leaning more towards putting this database into cosmos db at this point, but I don't want to have 100 million objects with empty properties as many of these don't have the same properties, so I need to clean things up a bit more and squish down a bit more. This, unfortunately, takes a lot of time with this many rows. After some manipulation, our final table has just over 15 million documents and about 10 properties per document on average.
 
@@ -303,7 +303,7 @@ Due to the way I was working on this, I did end up spinning back up the DB serve
 
 I'm not 100% sure on how to convert this to json and do it with this many documents and have the performance reasonable quite yet... time will tell I suppose.
 
-#### 6
+#### Day 6
 
 It is now a Saturday, so I could just put this on the shelf, but I have a hard time letting go of tasks that may need to run in batch over a long period of time when there is a weekend. So I took some more time to work on this. A big part of what I was thinking about was whether I wanted to go nosql with this dataset. I was leaning in this direction just due to the sporadic use of this data and the fact that nosql was kind of in vogue to a degree.
 
@@ -428,7 +428,7 @@ where k in (1,2,3) and isdate(v) = 1 and v like '%/%/%'
 
 ... several weeks pass...
 
-###7
+#### Day 7
 
 After some other priorities jumped the line, I was able to make it back to this project. *UNNNNNNNN*fortunately it seems that my server got deallocated and I ran into some odd issues turning back on the azure vm. There were a couple, but mostly they seemed to really be something like this:
 
@@ -606,7 +606,7 @@ Unfortunately, this server is old enough that it seems the azure portal doesn't 
 
 ...time passes while I import data...
 
-###8
+#### Day 8
 
 After importing data for a day or so, all the data was in cosmos. This was just checking every couple of hours or so tops and picking a new file. I only had 10 years to do, so this was just some time spent popping onto my computer over the weekend. Unfortunately, the data for azure tables is just way too slow on the import. So I'm going to nix that for now. This day was the final imports and also my db01 server returned to service, so I hopped on there to see if migrating from a cloud csv into azure tables was going to be faster. Sadly, I was already done with the 2020s and 2019 and the next year back was ~20x the size. Since this was indicative, anyway, of the rest of the years to import, I tried doing that on the azure sql box using the azure storage tool. Long story short, it just would not ever open in that tool, so I couldn't start the import. Since it took _days_ to do the tiniest year from my computer outside of the azure network, I just decided to drop this. I did try quite a few times and rebooted and patched and tried other various things, but the tool just could not seem to handle the csv file which was 400MB in size. There were only 3 columns an id, a property id, and a value. I basically used the id as the PartitionKey, the propertyid as the RowKey, and then the value was set per row. This worked fine with the smaller years, but it would not even open the larger files to show the preview.
 
@@ -614,7 +614,34 @@ Maybe there was a way to do this without showing a preview, but as I was already
 
 I also stopped by local sql docker instance as I wasn't using it. Doesn't matter much, but it was a loose plot thread here I thought I'd tie up =P The reason for this was just that since db01 popped back up finally, I just did the data manipulation there and I already had wanted to test the import from that box since it was already *in* Azure. That box was deallocated, and I think that on startup I was just getting not helpful errors all along the way while it was spinning up. I didn't do anything other than start it and then watch it fail over and over when I was looking at it. But when I checked the next day it was back up and everything was working. I didn't go back and look at any of the job details to find more info as I'm guessing it was just something with the spin up related to not waiting and ultimately I moved on anyway. Anyway, since it was up I could do the little bit of testing and just do the sql manipulation I wanted to do on that box before deleting it instead of doing it locally. Glad I did get docker back installed for next time I need to do something similar.
 
-###9
+#### Part 1, done. Thoughts.
+
+My original high level to do:
+
+1. Handle SQL data (Index)
+2. Handle Files
+3. Create new searcher app
+4. Turn off old machine (equipment will decomm in another effort)
+
+I found that as I was tracking this work for myself, I kind of got distracted by #3 while I was in the midst of #1 and #2. In part, I think this was largely because I thought I wanted to move to cosmos for the database access, but wanted to 'test' the azure tables approach which led to a lot of kind of back and forth mentally for me.
+
+I also had several unrelated projects jump into the middle of this that I had to handle that did not really help that back and forth. Ultimately, I pulled the tricker on cosmos, and then imported the same CSV data into azure sql as a backup if I needed to do some adhoc query of the data and didn't want to do it on cosmos for some reason.
+
+After solidifying that, Step 1 and 2 were done, and knowing Step 4 is not something I'm going to write about at all, I was left with Step 3. I moved on to doing that already, but realized I should probably cut this entry here as the problems/topics for that are completely different. Ultimately I expect that Step to boil down to 'how do i want to wrap and interact with this data in a way that makes sense to the existing users?'
+
+I think that, as with much prototyping, this process would have been faster if I had focused on 'speed'. I could have simply grabbed the 2020s data which was tiny and then started prototyping a UI. But since I already had all of the data, I instead focused on getting all of the data out there so I didn't have to address that step again. Some of this is just due to the nature of the way work flows for me currently. I may have a project bump out all current work due to a business need at any time and sometimes I have to shelve work for months. So I am always in a state of thinking about how I may need to shelve something tomorrow and try not to get things 'halfway' setup that I can't easily delete. Creating a prototype that could be orphaned for a long time isn't valuable, but getting this data 'migrated' is valuable because we *could* lose or shut down the original machine in a pinch if this project is shelved for a year because at that time this archive will be even older and have even less frequent use.
+
+That being said, if I could go back, I would rather have (from a dev standpoint) just dumped a couple years of data somewhere, prototyped away, and then wrapped things up with a '...now i just need to import the rest of the data....' type of idea. But had I used azure tables for that, I may have been sad in the future when I tried to upload all of that data though. =P
+
+Regardless, I am declaring this part 'done' and moving on. Done > Perfect.
+
+Next up, the indexing app. =)
+
+
+
+
+
+#### Day 9
 
 Now that all of the data was uploaded, It was time to write some code to actually pull the data out and do some cleanup. To finally cleanup, I wiped the sql vm in the cloud and wiped the full backup duplicate azure sql database. I still have the replica of the id,k,v table on azure sql, but I at this point I expect to use cosmosdb for this purpose. I also still have an azure table with a small subset of the data for possibly doing some prototyping on. It is not as if we could *not* put data into azure tables slower, there just doesn't appear to be any value to it vs sql or cosmos so I'm not going to worry about it for now. Ideally, I'm hoping to just publish this solution on GitHub, but we'll see.
 
@@ -627,7 +654,7 @@ While I'm not 100% sure exactly what framework or platform I'm going to use, for
 
 ...time passes for prototyping and development.
 
-###10
+#### Day 10
 
 I like sveltejs, so I am going to start with that. I am, generally, more of a microsoft fan, but I use svelte pretty regularly for a very frequently updated project day to day, and I have not moved it to svelteKIT yet, so I think I'll go with that. To start, anyway. Current options I'm considering:
 
@@ -650,7 +677,7 @@ I believe I need an app registration as well, so I go and create one over there 
 
 I did some fiddling on this throughout the day, but had to take care of some other things, so basically just got the sveltekit project stubbed out and got msal running and then plugged in some basic queries with env variables client side to test communication. Ran into some CORS issues to look into next.
 
-###11
+#### Day 11
 
 I was able to get over the CORS issues by specifying any source. Using localhost didn't seem to work and I found a bug resolution on cosmosdb about this that indicated you could just disable the check. For now, I just set the allowed location to * because I'm hoping these queries will actually come from the SPA vs a specific API, but we'll see.
 
