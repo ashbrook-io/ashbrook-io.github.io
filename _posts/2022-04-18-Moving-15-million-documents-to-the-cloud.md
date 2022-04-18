@@ -20,7 +20,7 @@ Currently, I am working at a relatively small company for myself. ~500 people an
 
 Currently, we already have a new repository system in place. All new images go there and all that system works fine, but we did not want to move all of the old stuff over to keep costs down. The new system is not cheap in terms of storage and that's a discussion for another day. We had a team that was still adding some data to it while they migrated that pinned the old system in place until recently. Now they have moved to the new system, so we can address the old system in terms of what to do with it for a longer term home. I'll call this system the legacy system. The legacy system is used for reference and searching for older documents on an as needed basis. It's not frequently needed, but it *is* still needed. Currently we have about 16 million documents on an old server. Normally there is an id number that exists in another system that we would look up the image in this system, but there are about 30 other fields that are used to index the documents as well for searching.
 
-The existing system has a little over 16 million files stored and about 133million indexed values. Some of these documents have multiple pages, but they are generally just single page. The document table shows that there are about 13.5 million documents and maybe 10-20k more pages than there are document objects. Seems this system may have been purged prior to my time here in the last 5 years. This makes some senser as there are documents going back to 2002 for some reference data, even though I don't see any documents dated earlier than 2006. As best we can, we'd like to take everything if possible since this is just an archive anyway.
+The existing system has a little over 16 million files stored and about 133million indexed values. Some of these documents have multiple pages, but they are generally just single page. The document table shows that there are about 13.5 million documents and maybe 10-20k more pages than there are document objects. Seems this system may have been purged prior to my time here in the last 5 years. This makes some sense as there are documents going back to 2002 for some index data, even though I don't see any actual file references dated earlier than 2006. As best we can, we'd like to take everything if possible since this is just an archive anyway.
 
 Current system is a win2k8 machine running an old version of sql that has been migrated probably since sql 6.5 or sql 7 a few times. This is one of the last machines closing out a datacenter migration project. All major systems have been moved for some time, but now it's time to handle a few infrastructure servers and this one so all of the equipment can be decommissioned. The old version of windows and sql limits a few tooling decisions and wizards, but for the most part we'll just be working around those.
 
@@ -28,6 +28,8 @@ Current system is a win2k8 machine running an old version of sql that has been m
 ### To-Be
 
 Target is currently to get the index data into some location where we can setup a simple web application to search the existing index data. When searching for solutions that involved storing blob data and using an existing index, I didn't see much. I'm guessing because it would seem that this is fairly simple, I think. Copy the blob data somewhere. Copy the index somewhere. Make a little app to search the index and give a link to the blob data.
+
+_note: When I say 'didn't see much' I meant in terms of moving into an azure/aws type of canned solution. Most of those solutions involved ingesting data and handling the indexing there. In my case, I already have the index, so just want to import the index data and reference the blobs somewhere._
 
 This is kind of high level. As this system maybe has a dozen users who may search it, it doesn't not require anything incredibly robust, but we don't want something that is bad either. The main goal for target state is maintaining the search and getting rid of the old infrastructure.
 
@@ -143,6 +145,8 @@ And then I simply right clicked on each folder on db01 to get a count:
 
 Everything matches, so yay, this part is done. Files are moved.
 
+_note: Worth noting here that I did go back and do a bunch of spot checks to just make sure files were where I expected them to be. Additionally, when I was fiddling with UI prototypes and messing around, I would simply pull random values from the index data, and then hit the files randomly as well. This happened later, but I already knew I would be doing that, so I just moved on at this point. Just wanted to toss an editor's note in here that I *did* do a little more than just check the counts to test the data was there. =)_
+
 On the original server, Folders 015 and 016 were moved to another location so they don't show up in the app any longer. Just in case there are some kind of versioning updates or anything, I just want to minimize that. When a file is not there, the app will toss an error with the file name and we simply go and retrieve that out of cool storage. This is already an existing practice so nothing that will cause any unforseen experiences. 017 is left as I'll probably go back later and take one last look to see if anyone snuck a document in somehow as we have not completely disconnected all scanners, just repointed to them to the new system.
 
 While this was going on, I was also working on the database migration. This part was relatively straightforward as well, I simply opened up management studio on db01 and picked the deploy to azure task. We have moved a number of databases to azure sql over the years, and this is generally how I do this.
@@ -164,13 +168,15 @@ Plan for the next day:
 
 So first thing I did on Day 4 was start writing this blog post. I had already intended to keep a running narrative, but I realized I was on Day 4 and just had notes of what I was doing which isn't exactly what I wanted to do originally. So I caught up to here. =)
 
+_note: The entire goal of this day-by-day log was to give some insight into this type of a process. So letting my notes languish seemed like a bad idea. =P fortunately I got it going at this point as I had some interruptions later that would have made recounting what all went on a bit of a nightmare._
+
 I'm still not exactly sure what shape the data is going to take, so I cleared out all of the data from the database just to narrow the objects in my head space for now. DB01 was turned off for now and I am using Azure Data Studio for all of my sql work on my mac. The key tables with metadata that I need are these:
 
 - PropertyCharValues
 - PropertyDateValues
 - PropertyFloatValues
 - DocumentFiles
-- 
+
 There are some other 'type' tables and also a table for mapping the file to the documentid as well as a handful of other items. But mainly we need the index data for the property value tables and which file it goes with. There are some versioning considerations also, but mainly my point is there are another 300+ tables that we don't need. So I first want to clean this out just so we can retain this base copy of all of the metadata, but skip all of the junk we don't. So next I went through all of the tables and other objects and cleaned things out.
 
 First I wiped all of the views using `Select 'drop view [' + [name] + ']' From sys.objects where type = 'v'`. Note that this will actually catch some system views that won't delete. But I wasn't worried about this since this is basicaly a scratch type of db and worked for my purposes.
@@ -368,7 +374,7 @@ and these were the sizes:
 
 ![image](https://user-images.githubusercontent.com/7390156/160253990-34e155e1-83b2-4926-807a-f4d7db149b6a.png)
 
-I realize it's not a huge difference, but iw as surprised that the id,k,v table was so much larger than the normalized table. Not terribly shocked that the json table was much bigger just because lots of kind of redundant text. but those null values dont' even exist in the base taable so was kind of surprised. i'm ignoring the index really and just talking about the data size here currently. 
+I realize it's not a huge difference, but iw as surprised that the id,k,v table was so much larger than the normalized table. Not terribly shocked that the json table was much bigger just because lots of kind of redundant text. but those null values don't even exist in the base table so was kind of surprised. i'm ignoring the index really and just talking about the data size here currently. 
 
 I also noticed after i was done that I should add the `, WITHOUT_ARRAY_WRAPPER` option as well, although that didn't reduce the size much. ~60MB on the t0wj table.
 
@@ -615,6 +621,8 @@ Maybe there was a way to do this without showing a preview, but as I was already
 I also stopped by local sql docker instance as I wasn't using it. Doesn't matter much, but it was a loose plot thread here I thought I'd tie up =P The reason for this was just that since db01 popped back up finally, I just did the data manipulation there and I already had wanted to test the import from that box since it was already *in* Azure. That box was deallocated, and I think that on startup I was just getting not helpful errors all along the way while it was spinning up. I didn't do anything other than start it and then watch it fail over and over when I was looking at it. But when I checked the next day it was back up and everything was working. I didn't go back and look at any of the job details to find more info as I'm guessing it was just something with the spin up related to not waiting and ultimately I moved on anyway. Anyway, since it was up I could do the little bit of testing and just do the sql manipulation I wanted to do on that box before deleting it instead of doing it locally. Glad I did get docker back installed for next time I need to do something similar.
 
 #### Part 1, done. Thoughts.
+
+My goal for this post was simply to provide an account of someone actually doing this process. Hopefully this gives some insight to someone else, or at least future me about what happened here. =)
 
 My original high level to do:
 
