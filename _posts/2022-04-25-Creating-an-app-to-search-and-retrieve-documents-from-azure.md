@@ -239,6 +239,13 @@ A little googling pointed me to https://dev.botframework.com/. Let's see what I 
 - Oddly, it seems like the name of my bot stayed the same and the profile stayed the same. I'm going to guess that this is because I'm probably working inside of some kind of project, and this is different than the resources that were provisioned on azure. While this is great because the name can stay the same, it's not really the expected behavior for me. But at least we're moving forward.
 
   ![image](https://user-images.githubusercontent.com/7390156/164082791-ebd858e7-76ab-4a9e-ab97-d023998556af.png)
+  
+  Now we're cookin'! Or... well at least we seem to have some ingredients out to start cooking. =)
+  
+  ![image](https://user-images.githubusercontent.com/7390156/164082973-e320df26-21e4-4ab3-8d34-0851ecc13539.png)
+  
+- So now I need to see how I can 'run' this bot. I click the 'start bot' button at the top right and I get an error. I imagine this is because I am missing those components I noted earlier. I downloaded the Bot Framework Emulator, and fired it up. It does not appear that this solved the issue for me, so will need a bit more research. Hitting 'start bot' again just kicks out the same error which is some type of framework issue I see details about x64 which isn't great since I'm on an M1 mac. Maybe this won't work on here. I'll have to check on the next day, which may not be tomorrow =P
+
 
 
 
