@@ -209,6 +209,39 @@ A little googling pointed me to https://dev.botframework.com/. Let's see what I 
 - I also only included the required resources and unchecked all of the 'optional' resources. I *do* need access to cosmos and azure blob storage, but not for the bot to use, so I think I will add those later as I don't want this wizard to create some items for me. I think it's pretty unlikely that I'll need an S1 app service, but I'll just snag the default for now.
 
   ![image](https://user-images.githubusercontent.com/7390156/164077228-9590b4a8-a881-4508-8827-772260cc8219.png)
+  
+- Provisioning is 'partially complete' but looks like I still need to do some things.
+
+![image](https://user-images.githubusercontent.com/7390156/164077720-224743e1-e400-4ba7-95c4-cde0cbc3a0d1.png)
+
+- Unfortunately, that link didn't provide me with a _clear_ answer as there were a lot of issues. Simply searching for the answer online got me to an answer pretty quickly, however. Simply need to go to Subscriptions and pick the one I want in the azure portal. Then go to Resource providers, type bot, and pick the bot service and hit register.
+  
+  ![image](https://user-images.githubusercontent.com/7390156/164078431-cb913b4d-1e74-457d-bb37-e130c57604b0.png)
+  
+- This took a few minutes to complete, then I headed back to the app. I clicked on a couple of other 'getting started' tasks before realizing that there seemed to be dialogue options or actions/buttons hidden by that dialogue on the right, so I closed that out. I went ahead and headed over to publish to see if I could get this thing out there! Sadly, 'twas not to be. My attempt to publish pulled this error, which I'm guessing is related to the previous registration. Now to see how to 'fix' it. Bummer, this is definitely something that I'd rather was a bit more turnkey. I'm worry about how a 'citizen developer' would go about troubleshooting these sorts of things.
+  
+  ![image](https://user-images.githubusercontent.com/7390156/164079864-af5281f1-6d52-47e2-a00e-148ffa611d3c.png)
+
+- I thought maybe I could just go and 'edit' the profile before looking and see if re-walking the wizard would fix things.
+
+  ![image](https://user-images.githubusercontent.com/7390156/164080191-8cd612e9-927f-40de-81b7-a5980bc766a7.png)
+
+  Unfortunately, this appeared to simply allow me to select some of the new optional resources and then maybe redeploy? I just cancelled out. I'm going to assume that this is just... I dunno something that didn't get setup properly because of the missing registration earlier. So I'm just going to wipe the resource group with these resources and start over.
+  
+- Creating the app with 'slightly' different values this time:
+
+  ![image](https://user-images.githubusercontent.com/7390156/164082116-44ebd993-b252-4865-b338-b5be5dd072a5.png)
+
+  That's more like it!
+  
+  ![image](https://user-images.githubusercontent.com/7390156/164082426-f0b6ee99-28e9-470f-87af-3f0e9a5c509b.png)
+
+- Oddly, it seems like the name of my bot stayed the same and the profile stayed the same. I'm going to guess that this is because I'm probably working inside of some kind of project, and this is different than the resources that were provisioned on azure. While this is great because the name can stay the same, it's not really the expected behavior for me. But at least we're moving forward.
+
+  ![image](https://user-images.githubusercontent.com/7390156/164082791-ebd858e7-76ab-4a9e-ab97-d023998556af.png)
+
+
+
 
 
 
