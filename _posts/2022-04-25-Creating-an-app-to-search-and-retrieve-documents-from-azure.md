@@ -155,6 +155,66 @@ namespace Data
     //etc etc x ~60 properties
 ```
 
+Added `dotnet add package Microsoft.Azure.Cosmos` as that's... kinda key for cosmos data also =D I'm guessing I could go pure rest based, but the idea behind a blazor app, for me anyway, is just using the ms tools as they seem to be intended without a lot of 'creative' flare in the implementation. Keep it simple, as they say.
+
+... some time plasses while I fiddle with things ...
+
+While setting things up and looking at handling this, I came across [this](https://blog.jeremylikness.com/blog/azure-ad-secured-serverless-cosmosdb-from-blazor-webassembly/) article which seems to actually do *exactly* what I had intended to setup. Seeing it laid out like this, give me some pause as there are a lot of configuration steps that are required for the app to work this way. This isn't 'bad', but does make me concerned about the ability for anyone in our small operations team to troubleshoot anything with this and support it down the line. I'm not sure that there is another way to *really* work things the *right* way like this without those steps. but, maybe it's time for a more dramatic turn?
+
+### CHATBOT!
+
+I'm sure the first question about this may be 'who tho?' and that's a valid question. The answers aren't too interesting. Remembering that this is an app for a small group of users (<20) our requirements on how it works and what is 'ok' is relatively easy to vet. So switching to a solution like this likely won't cause any disruption there. I don't think the cost will be signficantly higher based on what I've read. We also have had an interesting time getting the customer population engaged in opening their mind about what types of applications can be built and getting something 'cool' like chat bot in place may generate some positive buzz that leads to additional citizen developer interest. Our users all utilize ms teams today, so this will probably count as something new and cool. Plus, I know our CIO will like a 'cool' implementation. I had steered away from this thinking it would have more configuration points and probably a bit more complexity than a 'basic' app, but after looking at the setup on the article above, I think maybe I'm mistaken.
+
+I would have a different view if we had various teams who were creating systems like this on a regular basis, but we still have an app running that was written in 2006, so.... some things here have a long life. =) And if we are going to do something a bit more exotic, why not do something with some 'cool' points as well. =)
+
+I have written some discord integration bots in the past, but it's been awhile. I think I may have also written a poc teams bot at some point, but I am not 100% sure on that and if so it was quite some time back. I did write some integration with ms communicator as well, but it's been... over 10 years for sure since I did that, so while I have some conceptual exposure, nothing practical for today's world and am largely starting fresh. =P
+
+A little googling pointed me to https://dev.botframework.com/. Let's see what I did:
+
+- Downloaded composer
+- add it to applications folder so it could update. doesn't appear to work properly in the downloads folder. Not totally unexpected.
+- Click create new and then pick an empty bot on c# platform. The others need some other resources, but I'm going to just poke around with this one first.
+
+  ![image](https://user-images.githubusercontent.com/7390156/164064690-ba480b46-7ae9-4339-bfcb-f03a288bbd4b.png)
+
+
+- I picked a web function as I don't think I need an entire app for this and I think I can just use triggers from teams for this. I'm going to name it Dale. Since I'm replacing a system called doclink, I abbreviate that as 'dla' quite frequently. I'm trying to name things a bit more interestingly lately, so we'll go with Dale.
+  
+  ![image](https://user-images.githubusercontent.com/7390156/164064611-3736ded2-5777-4038-8e8c-68261b0fa68d.png)
+
+
+- I got this, so I clicked Install:
+  
+  ![image](https://user-images.githubusercontent.com/7390156/164064278-cfdaddef-f550-47ca-b118-9f7ae333c52b.png)
+
+- It just takes me to a web page for installing that. I use homebrew, so that's what I do:
+  
+  ```
+  brew tap azure/functions
+  brew install azure-functions-core-tools@3
+  ```
+  
+- Go back and do the first few steps. Progress! 
+  
+  ![image](https://user-images.githubusercontent.com/7390156/164065065-faf39d43-a0dd-461a-b9b3-dd4c3daf13a3.png)
+
+- Composer opened up and I got the initial workflow. While clicking through the opening 'tips' I got this dialogue. I didn't install this, so I'm guessing I may need this as well. I opened up the download page, but didn't install it yet as I'm not really sure I need it yet. But since I'm not sure how to get back to these tips right now, I'll just save it. I'm not going to include the link here, but I'm sure searching for the bot emulator will show where to get it.
+  
+  ![image](https://user-images.githubusercontent.com/7390156/164065558-c2af2047-5ba3-401d-83b3-b337f5d2ed4d.png)
+  
+- After this, there was a getting started wizard on the right, I just clicked through those things in order. One of the first things I ran into was a publish wizard. Why not? Let's go =P Well, it was more creating a publishing profile. So I stepped through that. I have rights on Azure, so I signed in, selected my organization, and plugged in some info. 
+
+  ![image](https://user-images.githubusercontent.com/7390156/164066844-4d6d0ad4-52fd-44b5-bf4e-c7ee25ffa3ce.png)
+
+- I also only included the required resources and unchecked all of the 'optional' resources. I *do* need access to cosmos and azure blob storage, but not for the bot to use, so I think I will add those later as I don't want this wizard to create some items for me. I think it's pretty unlikely that I'll need an S1 app service, but I'll just snag the default for now.
+
+  ![image](https://user-images.githubusercontent.com/7390156/164077228-9590b4a8-a881-4508-8827-772260cc8219.png)
+
+
+
+
+
+
 
 
 
