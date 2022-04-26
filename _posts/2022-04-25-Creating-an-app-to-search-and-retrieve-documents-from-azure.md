@@ -247,6 +247,63 @@ A little googling pointed me to https://dev.botframework.com/. Let's see what I 
 - So now I need to see how I can 'run' this bot. I click the 'start bot' button at the top right and I get an error. I imagine this is because I am missing those components I noted earlier. I downloaded the Bot Framework Emulator, and fired it up. It does not appear that this solved the issue for me, so will need a bit more research. Hitting 'start bot' again just kicks out the same error which is some type of framework issue I see details about x64 which isn't great since I'm on an M1 mac. Maybe this won't work on here. I'll have to check on the next day, which may not be tomorrow =P
 
 
+### Day X, what's old is new again...
+
+So, some time has passed as some other projects jumped in. As this keeps happening, I decided now was maybe a good time to get the prototype up and working that runs just like the initial app I had in mind when building this. I want to come back to the chatbot, but in the event of disaster, it would be good to get the fully functioning 'prototype' up and running so that we could consider the migration complete, and additional changes an improvement.
+
+The downside (and the reason i haven't done this yet) is that once something is built, a lot of times there is little business incentive to improve or move it until it is required. And having something 'working' will likely be 'good enough' for a long time. I'm going to be optimistic though, and use the opportunity to create some better visibility into the way some custom internal sites currently work by packaging up the project templates and putting them out on public github. There's some value there as well, so no time lost.
+
+At this point, if you aren't me, you have no idea what I'm talking about, so let's talk about the 'new' prototype based on something we currently use. This is the 'old' item referenced in my subtitle above. =P
+
+Currently, one of our most used internal tools is a dashboard type of application. Technically speaking, it is a visualizer for some json data that is protected by AzureAD for logins and authorization. The flow basically looks like the diagram below.
+
+```mermaid
+sequenceDiagram
+    participant A as Feeds
+    participant B as MSGraph
+    actor C as SPA
+    A->>B: Put data
+    B->>B: Handles logins with Azure
+    B->>B: Stores data on O365
+    B->>+C: Get data            
+```
+
+_note: if you haven't, check out the github supported diagramming with [mermaid](https://mermaid-js.github.io)!_
+
+This is pretty simple, but msgraph uses the app registration and authorization with azure ad currently to do the token exchange for a request to msgraph for a file on 0365 sharepoint which is where the data is stored. This is a simple solution that just allows us to provide access to AzureAD users which we can then lock down on the sharepoint folder in terms of access to what they can get data on. We can also version the files and pull multiple versions to make trends if desired. This is infrequently used, but it's an easy way to show trends over time without saving a table for that data since you can just pull it out via msgraph.
+
+Firstly, I went ahead and created a blank of the project with the setup that I use currently. I haven't actually created a project template for it previously, so now seemed like a good time. I present [stunning-bassoon](https://github.com/royashbrook/stunning-bassoon)! Thank goodness for the random name generator, I am terrible with names and normally name these things something super boring like 't0'.
+
+Now I want to add the auth and other sync details that I want, for that I'll create a new project based on stunning-bassoon named [laughing-barnacle](https://github.com/royashbrook/laughing-barnacle). I love these names. =) I'll probably just call this lb for short moving forward.
+
+To stub this out, I'm going to create a new app on my personal azure setup just to test. I name it for lb and just add a localhost redirect for now.
+
+![image](https://user-images.githubusercontent.com/7390156/165378014-8dc75458-475a-4562-b3a2-fe4a3269a384.png)
+
+You can find details on what to do next on the ms site [here](https://docs.microsoft.com/en-us/azure/active-directory/develop/single-page-app-quickstart?pivots=devlang-javascript).
+
+I think this flow does a great job of showing the token flow for auth. You can imagine that this happens as soon as the user goes to the site, and then there is another set of 5 and 6 where the data we need is gotten. We send an additional get with the access token and get the response with the data from ms graph.
+
+https://registeredapps.hosting.portal.azure.net/registeredapps/Content/1.0.01921997/Quickstarts/en/media/quickstart-v2-javascript-auth-code/diagram-01-auth-code-flow.png![image](https://user-images.githubusercontent.com/7390156/165380271-4d6d5ff9-2406-4cf0-a21c-7c95e740486c.png)
+
+For me, I currently have users coming to the site and it triggers the auth immediately rather than having a login button. So I simply ran `npm i @azure/msal-browser --save-dev` and made some js changes to customize my setup. The details will be in the lb repo for this.
+
+
+Now when I login, I get this:
+
+![image](https://user-images.githubusercontent.com/7390156/165396814-6238cb49-cc32-45a3-9275-9db8b523cf0a.png)
+
+and since I asked for the ability to read files for this client, I then get this prompt:
+
+![image](https://user-images.githubusercontent.com/7390156/165396931-baa25157-225a-4f27-977b-2279109d9d17.png)
+
+Now, in the case of my enterprise app, I just consent for the organization, and then I can check the azure ad logins for who is logging in, or I can check the sharepoint folder to see who is looking at what. This is read only, so no real impacts for concurrency or whatever.
+
+
+For me, I currently have users coming to the site and it triggers the auth immediately rather than having a login button. So I simply ran `npm i @azure/msal-browser --save-dev` and made some js changes to customize my setup. The details will be in the lb repo for this.
+
+
+
 
 
 
