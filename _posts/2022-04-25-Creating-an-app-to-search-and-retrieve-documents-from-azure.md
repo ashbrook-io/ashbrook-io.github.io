@@ -303,6 +303,51 @@ Now, in the case of my enterprise app, I just consent for the organization, and 
 For me, I currently have users coming to the site and it triggers the auth immediately rather than having a login button. So I simply ran `npm i @azure/msal-browser --save-dev` and made some js changes to customize my setup. The details will be in the lb repo for this.
 
 
+![image](https://user-images.githubusercontent.com/7390156/165406463-5a8d2217-777a-4a44-82e8-25b512aa7fe3.png)
+
+
+![image](https://user-images.githubusercontent.com/7390156/165407272-e73d5d85-04b1-4041-b1b6-d0f9996dc925.png)
+
+
+![image](https://user-images.githubusercontent.com/7390156/165407320-112552d0-e831-4c23-9a18-6e75fffac431.png)
+
+
+![image](https://user-images.githubusercontent.com/7390156/165407366-8b53cdcc-33b9-47cd-85ae-dd4898fc3c38.png)
+
+
+![image](https://user-images.githubusercontent.com/7390156/165407496-2c58e307-d93d-42d9-8e75-c1a54363dfe0.png)
+
+![image](https://user-images.githubusercontent.com/7390156/165407545-24639e0a-6b88-42d9-8505-e9df717fbd6b.png)
+
+
+![image](https://user-images.githubusercontent.com/7390156/165419453-ad7c4e8f-a906-4854-88e2-0dfa4b4fd355.png)
+
+![image](https://user-images.githubusercontent.com/7390156/165419660-c73e91ee-a96d-4266-92ff-a2d1c84cd714.png)
+
+![image](https://user-images.githubusercontent.com/7390156/165419768-94100372-1a9a-48b3-a6ca-fd470b58289e.png)
+
+![image](https://user-images.githubusercontent.com/7390156/165420132-c35e0f28-2738-4907-9870-58472917990c.png)
+
+![image](https://user-images.githubusercontent.com/7390156/165561993-56a9a4a2-5a13-4280-879c-b5571832d86d.png)
+
+![image](https://user-images.githubusercontent.com/7390156/165562070-8fa2acf7-dcb5-4268-9cba-8bf47e57ecc8.png)
+
+![image](https://user-images.githubusercontent.com/7390156/165562640-a8151eb0-7bdd-4540-94d4-586d58aeabf0.png)
+
+![image](https://user-images.githubusercontent.com/7390156/165582721-dd7c5489-2fc8-40dc-8a9a-382dea797742.png)
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
