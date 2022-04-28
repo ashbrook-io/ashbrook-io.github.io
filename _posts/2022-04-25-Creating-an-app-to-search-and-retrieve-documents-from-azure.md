@@ -336,6 +336,56 @@ For me, I currently have users coming to the site and it triggers the auth immed
 
 ![image](https://user-images.githubusercontent.com/7390156/165582721-dd7c5489-2fc8-40dc-8a9a-382dea797742.png)
 
+Figuring out the actual url to use to pull files is not the most straightforward thing. There may be some easier way to use it, but since we are going through graph anyway, I used graph explorer to search and get the data I wanted. I searched for driveitems and put in the file name that I know I want to see.
+
+![image](https://user-images.githubusercontent.com/7390156/165591154-abe13202-ce6b-4f82-ae7b-fa8463a3bf2b.png)
+
+Then, in the results, there will be arent references
+
+![image](https://user-images.githubusercontent.com/7390156/165591368-f323f5fb-cef0-4bb4-bf04-124296bcb286.png)
+
+Using that, we can build out final query that we'll use to pull files from that folder.
+
+`export const graphContentEndpoint = "https://graph.microsoft.com/v1.0/drives/b!UYlwtP7ji0euGnyoEVSB7CwNHVlEd-lFq0UFOjKo34eZk2vhVjpJTqRPC91hMyIA/items/01XMKSJ4SHY645HMG6HJGLAI3BNS2V3PRK/children?$select=name,lastModifiedDateTime,content.downloadUrl"`
+
+We are just pulling down all of the data in that folder and will merge it all together into one big data object.
+
+
+Now if I try and login to the site with a user from another org or who doesn't have rights, I get this:
+
+![image](https://user-images.githubusercontent.com/7390156/165593465-aebc6c48-e023-4a2f-b11d-80fb02e40784.png)
+
+Now, I currently don't have the application locked down in any way, so any user can *login* as long as they are in the organization. They'll get a token to try and use, but if they don't have access to the file, it won't matter. I created a test user just to trigger it and the browser just won't show the response data and will throw an error in the console like:
+
+![image](https://user-images.githubusercontent.com/7390156/165594468-93015f0d-54eb-45b8-b417-30d78589728e.png)
+
+
+Create Azure Keyvault to hold the keys:
+
+![image](https://user-images.githubusercontent.com/7390156/165766740-bb6836e5-b708-4f01-a756-5b0e09c3c40c.png)
+
+Set it to use RBAC so we can only give specific users access:
+
+
+![image](https://user-images.githubusercontent.com/7390156/165767001-6915a1ed-1a3e-4e93-be19-31c2a22563ef.png)
+
+deployed!
+
+![image](https://user-images.githubusercontent.com/7390156/165770114-af280c04-3d94-4a8b-a850-373d1ce00302.png)
+
+add myself as an owner to the vault:
+
+![image](https://user-images.githubusercontent.com/7390156/165770534-b20fe41b-78e9-4283-8c88-67e3896239cc.png)
+
+
+I had to wait a few minutes for my permissions to work, but then I created a secret
+
+![image](https://user-images.githubusercontent.com/7390156/165775656-ed364fc1-4172-4dc0-8bc5-32d5a924ffe8.png)
+
+
+
+
+
 
 
 
