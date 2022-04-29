@@ -383,6 +383,152 @@ I had to wait a few minutes for my permissions to work, but then I created a sec
 ![image](https://user-images.githubusercontent.com/7390156/165775656-ed364fc1-4172-4dc0-8bc5-32d5a924ffe8.png)
 
 
+![image](https://user-images.githubusercontent.com/7390156/165805760-122d3b5b-45e7-44d4-8b6e-23838a0c8778.png)
+
+
+![image](https://user-images.githubusercontent.com/7390156/165806062-ecef608c-9f2e-4852-81a4-f0c582c1f547.png)
+
+
+create a keyvault
+
+![image](https://user-images.githubusercontent.com/7390156/165843034-11be16ec-6fa9-4778-b2f1-3591c75eb0bc.png)
+
+select rbac
+
+![image](https://user-images.githubusercontent.com/7390156/165843093-b5ba7bfa-5bc3-4912-95e4-8419b83594f6.png)
+
+hit review and create to get the final page, hit create
+
+![image](https://user-images.githubusercontent.com/7390156/165843213-5ee839cd-8ecc-410f-b34e-de2daa8a234b.png)
+
+created! hit go to resource
+
+![image](https://user-images.githubusercontent.com/7390156/165843306-aef77cdd-226d-41da-8b32-c3c50fffd3b8.png)
+
+go to IAM and add a new role assignment
+
+![image](https://user-images.githubusercontent.com/7390156/165843461-3b507270-8635-4536-933d-8f0ecaa43add.png)
+
+
+add myself
+
+![image](https://user-images.githubusercontent.com/7390156/165843545-c0ce3848-c822-45ef-90b9-3b82e8d04cc2.png)
+
+hit review and assign and wait for it to take effect a min, then head to secrets and create a new one
+
+![image](https://user-images.githubusercontent.com/7390156/165845124-faf86abd-54c9-424c-89cf-4eb4ec984c4e.png)
+
+
+Let's create a new application for this demo:
+
+
+![image](https://user-images.githubusercontent.com/7390156/165849172-00eb67a0-976e-457e-9492-f5dec0a3fe4e.png)
+
+let's add a permission for keyvault for this app:
+
+![image](https://user-images.githubusercontent.com/7390156/165849334-2b59cff7-d768-430d-bb4f-a482fadaa897.png)
+
+grant admin consent!
+
+![image](https://user-images.githubusercontent.com/7390156/165849394-eb99a8ca-e451-4bba-a13d-079bd9e72818.png)
+
+
+Add myself as a keyvault secrets user:
+
+
+![image](https://user-images.githubusercontent.com/7390156/165854762-f701ce54-951e-4dd9-8f11-33ea3b9860db.png)
+
+
+bottom line at this point i realized that keyvault doesn't support cors, so that's the end
+
+
+create sharepoint site to hold the credentials
+![image](https://user-images.githubusercontent.com/7390156/165871590-23a1c736-ce09-487a-9198-974157338097.png)
+
+
+create a new list
+
+![image](https://user-images.githubusercontent.com/7390156/165871660-aa7051fb-2dc7-47ee-99e4-6c5b76b2dd10.png)
+
+
+open the list, click add column
+
+![image](https://user-images.githubusercontent.com/7390156/165871708-a517b9f4-81bc-4eca-b11d-d97182311859.png)
+
+click on 'new' and add an item
+
+![image](https://user-images.githubusercontent.com/7390156/165871799-8881f1d7-ed42-4f52-8fa4-da7e9f2392b2.png)
+
+
+here's our secret...
+
+![image](https://user-images.githubusercontent.com/7390156/165871867-49ccfccb-e52f-43f3-be20-28cd876b820a.png)
+
+I want to simply query this one record, so off to graph explorer to find all of my ids again:
+
+let's search for my site
+
+![image](https://user-images.githubusercontent.com/7390156/165873121-517a08f9-1a57-42a0-abef-52771a2f8520.png)
+
+so our site id is appears to be `ashbrookio.sharepoint.com,5d8c920c-cd55-4c5e-be46-784c50e0dded,591d0d2c-7744-45e9-ab45-053a32a8df87`
+
+so we can look at the lists on that site with
+
+https://graph.microsoft.com/v1.0/sites/ashbrookio.sharepoint.com,5d8c920c-cd55-4c5e-be46-784c50e0dded,591d0d2c-7744-45e9-ab45-053a32a8df87/lists
+
+and enumerate the items like
+
+https://graph.microsoft.com/v1.0/sites/ashbrookio.sharepoint.com,5d8c920c-cd55-4c5e-be46-784c50e0dded,591d0d2c-7744-45e9-ab45-053a32a8df87/lists/secrets/items
+
+
+https://graph.microsoft.com/v1.0/sites/root/lists/d7689e2b-941a-4cd3-bb24-55cddee54294/items?$filter=fields/Title eq 'Contoso Home'
+
+https://graph.microsoft.com/v1.0/sites/ashbrookio.sharepoint.com,5d8c920c-cd55-4c5e-be46-784c50e0dded,591d0d2c-7744-45e9-ab45-053a32a8df87/lists/secrets/items/2?expand=fields(select=secret)
+
+or if you want to query for it
+
+https://graph.microsoft.com/v1.0/sites/ashbrookio.sharepoint.com,5d8c920c-cd55-4c5e-be46-784c50e0dded,591d0d2c-7744-45e9-ab45-053a32a8df87/lists/secrets/items?$filter=fields/Title eq 'secret1'&expand=fields(select=secret)
+
+
+let's filter out some of the fields
+
+https://graph.microsoft.com/v1.0/sites/ashbrookio.sharepoint.com,5d8c920c-cd55-4c5e-be46-784c50e0dded,591d0d2c-7744-45e9-ab45-053a32a8df87/lists/secrets/items?$filter=fields/Title eq 'secret1'&expand=fields(select=secret)&$select=id
+
+this gives us a response sort of like this:
+
+![image](https://user-images.githubusercontent.com/7390156/165877542-d06f7869-4684-4bc9-929f-b110d9d6da1a.png)
+
+but... why torture ourselves, instead i can just unhide the 'id' column in the list so i know exactly what id i want to get, then i can skip using a custom field and just pull it by id like this:
+
+https://graph.microsoft.com/v1.0/sites/ashbrookio.sharepoint.com,5d8c920c-cd55-4c5e-be46-784c50e0dded,591d0d2c-7744-45e9-ab45-053a32a8df87/lists/secrets/items/1?expand=fields(select=title)&$select=id
+
+If you are searching, you'll want the second header below, regardless, you'll want to skip getting the odata meta data with the top one:
+
+![image](https://user-images.githubusercontent.com/7390156/165878935-2cd6e2c7-f095-4f39-8b7e-18a906c4c09a.png)
+
+this will leave you with a nice clean'ish response like
+
+```
+{
+    "id": "1",
+    "fields": {
+        "Title": "I'm secret with ID1!"
+    }
+}
+```
+
+I was not able to figure out a way from the documentation to get *just* the one field property that i wanted, but i could limit the properties to just the id and only expand the one field value using the query above. The documentation on the query parameters leaves quite a bit to be desired. I can't imagine there isn't a way to just tell the server 'give me only this property value' but this is where we are for now. =)
+
+
+
+
+
+
+
+
+
+
+
 
 
 
