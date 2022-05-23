@@ -7,13 +7,15 @@ subtitle: >-
 date: '2022-04-25'
 ---
 
-After moving all of our documents and our index into the cloud (Azure), I needed to create a UI to search the index and retrieve the blobs. This is a sort of diary of my experience building one. This takes place right after migrating the data, but they are somewhat disconnected efforts, so I wanted to split up these two tasks from a narrative perspective. Moving the data and keeping it safe was also a very different level of 'acceptable' vs what I wanted to accomplish with the UI, as will become evident as I record my thoughts on theh process, I think.
+After moving all of our documents and our index into the cloud (Azure), I needed to create a UI to search the index and retrieve the blobs. This is a sort of diary of my experience building one. This takes place right after migrating the data, but they are somewhat disconnected efforts, so I wanted to split up these two tasks from a narrative perspective. Moving the data and keeping it safe was also a very different level of 'acceptable' vs what I wanted to accomplish with the UI, as will become evident as I record my thoughts on the process, I think.
 
-#### Prelude and Background
+_Edit: I happened to be departing my position where I created this while I was finalizing it, so the *main* goal became to keep it consistent with another project at work. To that end, I ended up initially implementing https://github.com/royashbrook/fuzzy-sniffle rather than anything else due to timing. It may be that something else will be done after some time, but a static site SPA is what went in initially as proof-of-concept, and that's what will be there until it's replaced. That being said, I thought it would be fun to just diary out the process as it's kind of similar to some past solution development processes._
+
+## Prelude and Background
 
 To recap, briefly, the current state of why this is happening, this system is going to replace an existing commercial document management system that has much more functionality. We have already have replaced that system with another offering, but we did not move the archive of what was in the old system, to the new system. We want to remove our dependency on the commercial software because we really just need to search the archive, so why not move the items into the cloud and search things there? The blob and index data have been moved to the cloud at this point, but we need a UI to search it.
 
-Moving on to discussion of the system, the functional requirements are pretty simple:
+The functional requirements are pretty simple:
 
 1. Work similar to the previous system
 2. Performance and Cost should be the same or 'better'.
@@ -26,22 +28,23 @@ On #1, this is relatively simple because the current user experience is pretty s
 
 Well... first we have to build it, but the basic flow of the system. is pretty simple. =)
 
-On #2, performance should be fine as this is pretty basic. Any weirdness can be solved with indexing, but I don't expect major issues because this is static data that doesn't update. And cost will just be lower because we won't pay for the software and all estimates show this will cost dollars per year, not thousands for our usage. On cost you may think 'oh... are you one of those labor is free people? because it still takes time to migrate!!!' and you would be right to ask that, but wrong on the labor is free. Although from a business perspective, they probably wouldn't worry about this in terms of prioritization, the reality is that this machine is running on some of our last bits of hardware to be removed from an old data center. We already had backups so the plan for some time has been 'if this physical machine breaks, we'll migrate to the new thing'. This is 'the new thing' in that description. The physical machine hasn't broken, but we are at the time to sunset it, so yay! In short, we can't 'do nothing' anyway because we need to empty the data center. =)
+On #2, performance should be fine as this is pretty basic. Any weirdness can be solved with indexing, but I don't expect major issues because this is static data that doesn't update. And cost will just be lower because we won't pay for the software and all estimates show this will cost dollars per year, not thousands for our usage. On cost you may think 'oh... are you one of those labor is free people? because it still takes time to migrate!!!' and you would be right to ask that, but wrong on the labor is free. Although from a business perspective, they probably wouldn't worry about this in terms of prioritization, the reality is that this machine is running on some of our last bits of hardware to be removed from an old data center. We already had backups so the plan for some time has been 'if this physical machine breaks, we'll migrate to the new thing'. This is 'the new thing' in that description. The physical machine hasn't broken, but we are at the time to sunset it, so yay! In short, we can't 'do nothing' anyway because we need to empty the data center. =) So the 'labor is free' is more like the 'labor cost is already included' to some extent. 
 
-So, now we know what to do functionally, but what do we build it on? React? Supabase is hot! Azure functions, lambda, blah blah? Well, for this I generally look at where I am now. I am a one man band for software work here currently, so I try not to stray too far from what we have. I don't want anyone who comes after me to have to maintain C, Java, Powershell, MS Flow jobs and GO or something. Even thought I'd love to write in as many languages as possible, it's just not a great stewardship of the environment one is in. Currently our environment for custom code consists of some legacy apps we wouldn't copy, dotnetcore apps, and sveltejs apps that use o365/msgraph for the service tier. All automated jobs are in powershell. SQL is all on azure.
+So, now we know what to do functionally, but what do we build it on? React? Supabase is hot! Azure functions, lambda, blah blah? Well, for this I generally look at where I am now. I am a one man band for software work here currently, so I try not to stray too far from what we have. I don't want anyone who comes after me to have to maintain C, Java, Powershell, MS Flow jobs and GO or something. Even thought I'd love to write in as many languages as possible, it's just not a great stewardship of the environment one is in. Currently our environment for custom code consists of some legacy apps we wouldn't copy, dotnetcore apps, and sveltejs apps that use o365/msgraph for the service tier. All automated jobs are in powershell. SQL is all on azure for custom apps.
 
 I have now introduced a couple of variables into the equation. A database in cosmos (although there is a copy in sql) and a set of blob data in azure storage. We have had blobs on azure storage for years, but only as a cool archive that is accessible by administrative staff, not something tied to an application where a user may have an error. Also no users access that needs to be audited, etc.
 
-Some considerings for me, personally, as I work on this are that I could *probably* follow a very simple tutorial and built a blazor/wasm app in dotnet, which I have considered replacing some of our existing applications with. The other major option for me is implementing an app on sveltekit. I use sveltejs currently for one of our key internal applications, but I backend the services using some o365/msgraph magic and I think moving to a more 'traditional' setup with sveltekit would make more sense and provide a path to update the internal svelte app. This application is probably simple enough to provide some good proof-of-concept on both platforms and give some insight into how that would work.
+Some considerations for me, personally, as I work on this are that I could *probably* follow a very simple tutorial and built a blazor/wasm app in dotnet, which I have considered replacing some of our existing applications with. The other major option for me is implementing an app on sveltekit. I use sveltejs currently for one of our key internal applications, but I backend the services using some o365/msgraph magic and I think moving to a more 'traditional' setup with sveltekit would make more sense and provide a path to update the internal svelte app. This application is probably simple enough to provide some good proof-of-concept on both platforms and give some insight into how that would work.
 
-Some additional details about the environment are that our users would be using azuread for authentication anyway, and likely using rbac in some way for authorization to the app. Possibly more on that later, but ironically our dotnet apps do not use azure auth, but our sveltejs app does. =) Plus our dotnet apps use sql for backends, and the svelte app uses o365/msgraph for it's data. This was more of an organic development than planned, but I think it provides a little color on the situation.
+Some additional details about the environment are that our users would be using azuread for authentication anyway, and likely using rbac in some way for authorization to the app. Possibly more on that later, but ironically our dotnet apps do not use azure auth, but our svelte spa app does. =) Plus our dotnet apps use sql for backends, and the svelte app uses o365/msgraph for it's data. This was more of an organic development than planned, but I think it provides a little color on the situation.
 
 I think that's enough current state info. Now I'm going to just hop into a play-by-play of what I did.
 
 _note: I wrote this prelude/background section after a few days of the play-by-play below, so there may be some recap or extra details about info here. But I wanted to leave it as I wrote it while I was doing it and creating a narrative around this process is what I was hoping to do._
 
+_Edit: I also wrote all of this prior to accepting a new position, so some of my perspective is colored by my thoughts at the time. After making the decision to move on to a new opportunity, it made more sense to just go with the svelte option that was more aligned with recent work done, but when I started this process a 4-6 weeks prior that wasn't my head space._
 
-#### Day 1
+## Day 1
 
 Now that all of the data was uploaded, It was time to write some code to actually pull the data out and do some cleanup. To finally cleanup, I wiped the sql vm in the cloud and wiped the full backup duplicate azure sql database. I still have the replica of the id,k,v table on azure sql, but I at this point I expect to use cosmosdb for this purpose. I also still have an azure table with a small subset of the data for possibly doing some prototyping on. It is not as if we could *not* put data into azure tables slower, there just doesn't appear to be any value to it vs sql or cosmos so I'm not going to worry about it for now. Ideally, I'm hoping to just publish this solution on GitHub, but we'll see.
 
@@ -56,7 +59,7 @@ I just followed the instructions for node.js on the MS site for doing the initia
 
 ...time passes for prototyping and development.
 
-#### Day 2
+## Day 2
 
 I like sveltejs, so I am going to start with that. I am, generally, more of a microsoft fan, but I use svelte pretty regularly for a very frequently updated project day to day, and I have not moved it to svelteKIT yet, so I think I'll go with that. To start, anyway. Current options I'm considering:
 
@@ -79,7 +82,7 @@ I believe I need an app registration as well, so I go and create one over there 
 
 I did some fiddling on this throughout the day, but had to take care of some other things, so basically just got the sveltekit project stubbed out and got msal running and then plugged in some basic queries with env variables client side to test communication. Ran into some CORS issues to look into next.
 
-#### Day 3
+## Day 3
 
 I was able to get over the CORS issues by specifying any source. Using localhost didn't seem to work and I found a bug resolution on cosmosdb about this that indicated you could just disable the check. For now, I just set the allowed location to * because I'm hoping these queries will actually come from the SPA vs a specific API, but we'll see.
 
@@ -93,11 +96,9 @@ As this only has limited users and no real 'roles' other than 'has access' I can
 
 We currently house some data on o365 and use msgraph for this purpose in another app and it works great. But msgraph doesn't appear to have a channel to just route to cosmos or sql. Maybe I can go through a data gateway and built some other service routing mechanism in o365 but I feel like that's just making things complicated at that point. The current o365/msgraph stuff works well because it's simple because the data is on sharepoint.
 
-#### Day 4
+## Day 4 (but not calendar day 4 =P)
 
 Off and on tasks bumped in front of this over the course of about a week somewhat stalling any changes. When I came back to things on a fresh monday, I was ready for a fresh start an decided I would just take a hard turn and spin up a blazor/wasm app to test things out that way. This day was mostly spent cleaning up the existing progress, bundling all of the updates/changes I had fiddled with into a PR on my repo, and putting together my planned next steps. Which *really* just amounted to 'make a blazor/wasm version of this'.
-
-At this point, I'd like to share some code here, but a lot of this prototyping I am just using hardcoded keys so I would have to clean it up. I may come back and do that and edit this in the future. =)
 
 I'm on a pretty new macbook and I haven't installed dotnet tools on here yet! So this also gives me a chance to run through some of those steps that I did.
 
@@ -117,7 +118,7 @@ I perform some basic steps to spin up something to open in vscode:
 1. create a new folder in terminal, switch to it
 2. dotnet new up an app like `dotnet new blazorserver -f net6.0`
 3. setup loca git on this code with `git init && git add . && git commit -m "initial"`
-4. open folder in vscode with `code .`
+4. open folder in vscode with `code .` _note: i previously already enabled this shortcut_
 5. vscode asked me to install some dependencies and I clicked ok
 6. open up terminal in vscode and run the app with `dotnet watch run`
 
@@ -125,7 +126,7 @@ Now we have a running app with some sample stuff in there. 🎉
 
 Tomorrow, will be time to connect some dots on the blazor app.
 
-#### Day 5
+## Day 5
 
 Things I did:
 
@@ -161,9 +162,9 @@ Added `dotnet add package Microsoft.Azure.Cosmos` as that's... kinda key for cos
 
 While setting things up and looking at handling this, I came across [this](https://blog.jeremylikness.com/blog/azure-ad-secured-serverless-cosmosdb-from-blazor-webassembly/) article which seems to actually do *exactly* what I had intended to setup. Seeing it laid out like this, give me some pause as there are a lot of configuration steps that are required for the app to work this way. This isn't 'bad', but does make me concerned about the ability for anyone in our small operations team to troubleshoot anything with this and support it down the line. I'm not sure that there is another way to *really* work things the *right* way like this without those steps. but, maybe it's time for a more dramatic turn?
 
-### CHATBOT!
+## Day 6 (ish?) - CHATBOT!
 
-I'm sure the first question about this may be 'who tho?' and that's a valid question. The answers aren't too interesting. Remembering that this is an app for a small group of users (<20) our requirements on how it works and what is 'ok' is relatively easy to vet. So switching to a solution like this likely won't cause any disruption there. I don't think the cost will be signficantly higher based on what I've read. We also have had an interesting time getting the customer population engaged in opening their mind about what types of applications can be built and getting something 'cool' like chat bot in place may generate some positive buzz that leads to additional citizen developer interest. Our users all utilize ms teams today, so this will probably count as something new and cool. Plus, I know our CIO will like a 'cool' implementation. I had steered away from this thinking it would have more configuration points and probably a bit more complexity than a 'basic' app, but after looking at the setup on the article above, I think maybe I'm mistaken.
+I'm sure the first question about this may be 'who tho?' and that's a valid question. The answers aren't too interesting. Remembering that this is an app for a small group of users (<20) our requirements on how it works and what is 'ok' is relatively easy to vet. So switching to a solution like this likely won't cause any disruption there. I don't think the cost will be signficantly higher based on what I've read. We also have had an interesting time getting the user population engaged in opening their mind about what types of applications can be built and getting something 'cool' like chat bot in place may generate some positive buzz that leads to additional citizen developer interest. Our users all utilize ms teams today, so this will probably count as something new and cool. Plus, I know our CIO will like a 'cool' implementation (and later confirmed this in a discussion with him). I had steered away from this thinking it would have more configuration points and probably a bit more complexity than a 'basic' app, but after looking at the setup on the article above, I think maybe I'm mistaken and it's similar.
 
 I would have a different view if we had various teams who were creating systems like this on a regular basis, but we still have an app running that was written in 2006, so.... some things here have a long life. =) And if we are going to do something a bit more exotic, why not do something with some 'cool' points as well. =)
 
@@ -247,7 +248,9 @@ A little googling pointed me to https://dev.botframework.com/. Let's see what I 
 - So now I need to see how I can 'run' this bot. I click the 'start bot' button at the top right and I get an error. I imagine this is because I am missing those components I noted earlier. I downloaded the Bot Framework Emulator, and fired it up. It does not appear that this solved the issue for me, so will need a bit more research. Hitting 'start bot' again just kicks out the same error which is some type of framework issue I see details about x64 which isn't great since I'm on an M1 mac. Maybe this won't work on here. I'll have to check on the next day, which may not be tomorrow =P
 
 
-### Day X, what's old is new again...
+## Day X, what's old is new again...
+
+![image](https://user-images.githubusercontent.com/7390156/169847795-dedf4fde-717a-4422-b156-07722df2467f.png)
 
 So, some time has passed as some other projects jumped in. As this keeps happening, I decided now was maybe a good time to get the prototype up and working that runs just like the initial app I had in mind when building this. I want to come back to the chatbot, but in the event of disaster, it would be good to get the fully functioning 'prototype' up and running so that we could consider the migration complete, and additional changes an improvement.
 
@@ -272,7 +275,7 @@ _note: if you haven't, check out the github supported diagramming with [mermaid]
 
 This is pretty simple, but msgraph uses the app registration and authorization with azure ad currently to do the token exchange for a request to msgraph for a file on 0365 sharepoint which is where the data is stored. This is a simple solution that just allows us to provide access to AzureAD users which we can then lock down on the sharepoint folder in terms of access to what they can get data on. We can also version the files and pull multiple versions to make trends if desired. This is infrequently used, but it's an easy way to show trends over time without saving a table for that data since you can just pull it out via msgraph.
 
-Firstly, I went ahead and created a blank of the project with the setup that I use currently. I haven't actually created a project template for it previously, so now seemed like a good time. I present [stunning-bassoon](https://github.com/royashbrook/stunning-bassoon)! Thank goodness for the random name generator, I am terrible with names and normally name these things something super boring like 't0'.
+Firstly, I went ahead and created a blank of the project with the setup that I use currently. I haven't actually created a project template for it previously, so now seemed like a good time. I present [stunning-bassoon](https://github.com/royashbrook/stunning-bassoon)! Thank goodness for the random name generator, I am terrible with generating fun names and normally name these things something super boring like 't0'.
 
 Now I want to add the auth and other sync details that I want, for that I'll create a new project based on stunning-bassoon named [laughing-barnacle](https://github.com/royashbrook/laughing-barnacle). I love these names. =) I'll probably just call this lb for short moving forward.
 
@@ -284,7 +287,7 @@ You can find details on what to do next on the ms site [here](https://docs.micro
 
 I think this flow does a great job of showing the token flow for auth. You can imagine that this happens as soon as the user goes to the site, and then there is another set of 5 and 6 where the data we need is gotten. We send an additional get with the access token and get the response with the data from ms graph.
 
-https://registeredapps.hosting.portal.azure.net/registeredapps/Content/1.0.01921997/Quickstarts/en/media/quickstart-v2-javascript-auth-code/diagram-01-auth-code-flow.png![image](https://user-images.githubusercontent.com/7390156/165380271-4d6d5ff9-2406-4cf0-a21c-7c95e740486c.png)
+![https://registeredapps.hosting.portal.azure.net/registeredapps/Content/1.0.01921997/Quickstarts/en/media/quickstart-v2-javascript-auth-code/diagram-01-auth-code-flow.png](https://user-images.githubusercontent.com/7390156/165380271-4d6d5ff9-2406-4cf0-a21c-7c95e740486c.png)
 
 For me, I currently have users coming to the site and it triggers the auth immediately rather than having a login button. So I simply ran `npm i @azure/msal-browser --save-dev` and made some js changes to customize my setup. The details will be in the lb repo for this.
 
@@ -297,42 +300,70 @@ and since I asked for the ability to read files for this client, I then get this
 
 ![image](https://user-images.githubusercontent.com/7390156/165396931-baa25157-225a-4f27-977b-2279109d9d17.png)
 
-Now, in the case of my enterprise app, I just consent for the organization, and then I can check the azure ad logins for who is logging in, or I can check the sharepoint folder to see who is looking at what. This is read only, so no real impacts for concurrency or whatever.
+Now, in the case of my enterprise app, I just consent for the organization, and then I can check the azure ad logins for who is logging in. This is read only, so no real impacts for concurrency or whatever.
 
 
 For me, I currently have users coming to the site and it triggers the auth immediately rather than having a login button. So I simply ran `npm i @azure/msal-browser --save-dev` and made some js changes to customize my setup. The details will be in the lb repo for this.
 
+#### Day Z (who even knows at this point?)
+
+![image](https://user-images.githubusercontent.com/7390156/169849128-e213e518-8dfb-4d8a-b205-4b0fee976057.png)
+
+_After the last update, I had a ton of tasks jump in front and interrupt about a week. Work on this was somewhat sporadic, but I took a lot of screenshots of the key things so I'm g_oing to just kind of include some running commentary as best I can below. =)_
+
+Originally I tried to add this without a tenant. I had to give myself permission on graph while testing queries.
 
 ![image](https://user-images.githubusercontent.com/7390156/165406463-5a8d2217-777a-4a44-82e8-25b512aa7fe3.png)
 
-
-![image](https://user-images.githubusercontent.com/7390156/165407272-e73d5d85-04b1-4041-b1b6-d0f9996dc925.png)
-
-
-![image](https://user-images.githubusercontent.com/7390156/165407320-112552d0-e831-4c23-9a18-6e75fffac431.png)
-
-
-![image](https://user-images.githubusercontent.com/7390156/165407366-8b53cdcc-33b9-47cd-85ae-dd4898fc3c38.png)
-
+got a link to the file and shared that with my account, sans tenant.
 
 ![image](https://user-images.githubusercontent.com/7390156/165407496-2c58e307-d93d-42d9-8e75-c1a54363dfe0.png)
 
+Here's the email i got when i shared the file
+
+![image](https://user-images.githubusercontent.com/7390156/165407272-e73d5d85-04b1-4041-b1b6-d0f9996dc925.png)
+
+And then I clicked and had to get a pin, and walk through this process prior to being able to open the file
+
+![image](https://user-images.githubusercontent.com/7390156/165407366-8b53cdcc-33b9-47cd-85ae-dd4898fc3c38.png)
+
+emailed pin
+
+![image](https://user-images.githubusercontent.com/7390156/165407320-112552d0-e831-4c23-9a18-6e75fffac431.png)
+
+this id looked like it might be the id to go with
+
 ![image](https://user-images.githubusercontent.com/7390156/165407545-24639e0a-6b88-42d9-8505-e9df717fbd6b.png)
 
+registered lb in my personal tenant, but then switched it later over to personal option 3 with any org and include personal accounts. maybe i shouldn't say this is 'sans tenant' because really this was just skipping only using the tenant for auth, at least that was the plan.
 
 ![image](https://user-images.githubusercontent.com/7390156/165419453-ad7c4e8f-a906-4854-88e2-0dfa4b4fd355.png)
 
+configured some permissions to allow graph to get stuff
+
 ![image](https://user-images.githubusercontent.com/7390156/165419660-c73e91ee-a96d-4266-92ff-a2d1c84cd714.png)
+
+logging in with tenant, also have to grant for graph explorer
 
 ![image](https://user-images.githubusercontent.com/7390156/165419768-94100372-1a9a-48b3-a6ca-fd470b58289e.png)
 
+if you setup permission for tenant only and then try and login from some other dir using ms, you'll get an error like this when you try and login to the app. this is me logging into live, successfuly but failing to login to the app which is only registered to a tenant.
+
 ![image](https://user-images.githubusercontent.com/7390156/165420132-c35e0f28-2738-4907-9870-58472917990c.png)
+
+creating a site to hold the data on o365 sharepoint, it's private, but should note that even if it's private people with admin rights seem to still be able to access. i'm guessing there is a way to lock this down, but that wasn't a concern for me at the moment.
 
 ![image](https://user-images.githubusercontent.com/7390156/165561993-56a9a4a2-5a13-4280-879c-b5571832d86d.png)
 
+added myself anyway (as i didn't know it didn't seem to matter since i own everything)
+
 ![image](https://user-images.githubusercontent.com/7390156/165562070-8fa2acf7-dcb5-4268-9cba-8bf47e57ecc8.png)
 
+originally i was testing with just a json file
+
 ![image](https://user-images.githubusercontent.com/7390156/165562640-a8151eb0-7bdd-4540-94d4-586d58aeabf0.png)
+
+but i switched over to a zipped json file when i starte to just mirror what i already had setup in my previous app setup
 
 ![image](https://user-images.githubusercontent.com/7390156/165582721-dd7c5489-2fc8-40dc-8a9a-382dea797742.png)
 
@@ -340,7 +371,7 @@ Figuring out the actual url to use to pull files is not the most straightforward
 
 ![image](https://user-images.githubusercontent.com/7390156/165591154-abe13202-ce6b-4f82-ae7b-fa8463a3bf2b.png)
 
-Then, in the results, there will be arent references
+Then, in the results, there will be parent references
 
 ![image](https://user-images.githubusercontent.com/7390156/165591368-f323f5fb-cef0-4bb4-bf04-124296bcb286.png)
 
@@ -350,43 +381,22 @@ Using that, we can build out final query that we'll use to pull files from that 
 
 We are just pulling down all of the data in that folder and will merge it all together into one big data object.
 
-
 Now if I try and login to the site with a user from another org or who doesn't have rights, I get this:
 
 ![image](https://user-images.githubusercontent.com/7390156/165593465-aebc6c48-e023-4a2f-b11d-80fb02e40784.png)
 
 Now, I currently don't have the application locked down in any way, so any user can *login* as long as they are in the organization. They'll get a token to try and use, but if they don't have access to the file, it won't matter. I created a test user just to trigger it and the browser just won't show the response data and will throw an error in the console like:
 
-![image](https://user-images.githubusercontent.com/7390156/165594468-93015f0d-54eb-45b8-b417-30d78589728e.png)
 
+This all worked great. The final output of this was a test project that uses all of the components to integrate with o365 for the files. You can see the example code here:
 
-Create Azure Keyvault to hold the keys:
+https://github.com/royashbrook/laughing-barnacle
 
-![image](https://user-images.githubusercontent.com/7390156/165766740-bb6836e5-b708-4f01-a756-5b0e09c3c40c.png)
+Now we need to add cosmos and blob storage.
 
-Set it to use RBAC so we can only give specific users access:
+## Captain's log, Stardate unknown...
 
-
-![image](https://user-images.githubusercontent.com/7390156/165767001-6915a1ed-1a3e-4e93-be19-31c2a22563ef.png)
-
-deployed!
-
-![image](https://user-images.githubusercontent.com/7390156/165770114-af280c04-3d94-4a8b-a850-373d1ce00302.png)
-
-add myself as an owner to the vault:
-
-![image](https://user-images.githubusercontent.com/7390156/165770534-b20fe41b-78e9-4283-8c88-67e3896239cc.png)
-
-
-I had to wait a few minutes for my permissions to work, but then I created a secret
-
-![image](https://user-images.githubusercontent.com/7390156/165775656-ed364fc1-4172-4dc0-8bc5-32d5a924ffe8.png)
-
-
-![image](https://user-images.githubusercontent.com/7390156/165805760-122d3b5b-45e7-44d4-8b6e-23838a0c8778.png)
-
-
-![image](https://user-images.githubusercontent.com/7390156/165806062-ecef608c-9f2e-4852-81a4-f0c582c1f547.png)
+Additional time passes. I decided to take a day to try and use the azure keyvault instead of using a file on azure. I will add some screenshots below and some narrative, but the TLDR; of this story is that you can't do this with a SPA app currently because Azure Keyvault does not allow CORS. So you have to create some kind of extra service to do this, which defeats the entire purpose of using a SPA (in my particular situation) anyway. But below is my journey to discovering this knowledge. =P What I ended up with is https://github.com/royashbrook/crispy-adventure an example project that pulled from a *LIST* on sharepoint for secrets. Similar to the file pull I ended up using, but, you know, there it is.
 
 
 create a keyvault
@@ -409,7 +419,6 @@ go to IAM and add a new role assignment
 
 ![image](https://user-images.githubusercontent.com/7390156/165843461-3b507270-8635-4536-933d-8f0ecaa43add.png)
 
-
 add myself
 
 ![image](https://user-images.githubusercontent.com/7390156/165843545-c0ce3848-c822-45ef-90b9-3b82e8d04cc2.png)
@@ -421,7 +430,6 @@ hit review and assign and wait for it to take effect a min, then head to secrets
 
 Let's create a new application for this demo:
 
-
 ![image](https://user-images.githubusercontent.com/7390156/165849172-00eb67a0-976e-457e-9492-f5dec0a3fe4e.png)
 
 let's add a permission for keyvault for this app:
@@ -432,24 +440,19 @@ grant admin consent!
 
 ![image](https://user-images.githubusercontent.com/7390156/165849394-eb99a8ca-e451-4bba-a13d-079bd9e72818.png)
 
-
 Add myself as a keyvault secrets user:
-
 
 ![image](https://user-images.githubusercontent.com/7390156/165854762-f701ce54-951e-4dd9-8f11-33ea3b9860db.png)
 
-
-bottom line at this point i realized that keyvault doesn't support cors, so that's the end
-
+I will truncate a lot of trial and error at this point. The bottom line is I realized that keyvault doesn't support cors, so that's the end of doing the azure vault. I think this is super silly that there is no cors for azure vault, but it is what it is. Blob storage and Cosmos and most other things in azure that I've ever tried all support cors, so I'm not sure why the vault doesn't, but .... /shrug. So anyway, moving on to storing the secrets on a secure list on sharepoint. I'll note here for anyone that thinks this is crazy that basically *ALL* of our business data is secured in this way on O365, so this isn't really any more or less secure than that. In an ideal world, I would probably switch to a service and secure it there, but currently this mimics some other apps we have setup internally, so sticking with this for consistencies sake.
 
 create sharepoint site to hold the credentials
-![image](https://user-images.githubusercontent.com/7390156/165871590-23a1c736-ce09-487a-9198-974157338097.png)
 
+![image](https://user-images.githubusercontent.com/7390156/165871590-23a1c736-ce09-487a-9198-974157338097.png)
 
 create a new list
 
 ![image](https://user-images.githubusercontent.com/7390156/165871660-aa7051fb-2dc7-47ee-99e4-6c5b76b2dd10.png)
-
 
 open the list, click add column
 
@@ -458,7 +461,6 @@ open the list, click add column
 click on 'new' and add an item
 
 ![image](https://user-images.githubusercontent.com/7390156/165871799-8881f1d7-ed42-4f52-8fa4-da7e9f2392b2.png)
-
 
 here's our secret...
 
@@ -480,15 +482,13 @@ and enumerate the items like
 
 https://graph.microsoft.com/v1.0/sites/ashbrookio.sharepoint.com,5d8c920c-cd55-4c5e-be46-784c50e0dded,591d0d2c-7744-45e9-ab45-053a32a8df87/lists/secrets/items
 
-
-https://graph.microsoft.com/v1.0/sites/root/lists/d7689e2b-941a-4cd3-bb24-55cddee54294/items?$filter=fields/Title eq 'Contoso Home'
+or expand/limit the resposne with
 
 https://graph.microsoft.com/v1.0/sites/ashbrookio.sharepoint.com,5d8c920c-cd55-4c5e-be46-784c50e0dded,591d0d2c-7744-45e9-ab45-053a32a8df87/lists/secrets/items/2?expand=fields(select=secret)
 
 or if you want to query for it
 
 https://graph.microsoft.com/v1.0/sites/ashbrookio.sharepoint.com,5d8c920c-cd55-4c5e-be46-784c50e0dded,591d0d2c-7744-45e9-ab45-053a32a8df87/lists/secrets/items?$filter=fields/Title eq 'secret1'&expand=fields(select=secret)
-
 
 let's filter out some of the fields
 
@@ -519,6 +519,12 @@ this will leave you with a nice clean'ish response like
 
 I was not able to figure out a way from the documentation to get *just* the one field property that i wanted, but i could limit the properties to just the id and only expand the one field value using the query above. The documentation on the query parameters leaves quite a bit to be desired. I can't imagine there isn't a way to just tell the server 'give me only this property value' but this is where we are for now. =)
 
+## Day 'The End', post-mortem, lessons learned, etc!
+
+In the end, I ended up:
+
+- Using O365 sharepoint to store the secrets in a file
+- Using the same file/cache download method I was already using in some other projects
 
 
 
@@ -564,6 +570,34 @@ I was not able to figure out a way from the documentation to get *just* the one 
 
 
 
+
+
+Create Azure Keyvault to hold the keys.
+
+![image](https://user-images.githubusercontent.com/7390156/165766740-bb6836e5-b708-4f01-a756-5b0e09c3c40c.png)
+
+Set it to use RBAC so we can only give specific users access
+
+![image](https://user-images.githubusercontent.com/7390156/165767001-6915a1ed-1a3e-4e93-be19-31c2a22563ef.png)
+
+deployed!
+
+![image](https://user-images.githubusercontent.com/7390156/165770114-af280c04-3d94-4a8b-a850-373d1ce00302.png)
+
+add myself as an owner to the vault:
+
+![image](https://user-images.githubusercontent.com/7390156/165770534-b20fe41b-78e9-4283-8c88-67e3896239cc.png)
+
+
+I had to wait a few minutes for my permissions to work, but then I created a secret
+
+![image](https://user-images.githubusercontent.com/7390156/165775656-ed364fc1-4172-4dc0-8bc5-32d5a924ffe8.png)
+
+
+![image](https://user-images.githubusercontent.com/7390156/165805760-122d3b5b-45e7-44d4-8b6e-23838a0c8778.png)
+
+
+![image](https://user-images.githubusercontent.com/7390156/165806062-ecef608c-9f2e-4852-81a4-f0c582c1f547.png)
 
 
 
