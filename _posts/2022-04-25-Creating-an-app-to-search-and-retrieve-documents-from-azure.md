@@ -554,3 +554,23 @@ Basically throught this process I created the following projects:
 There were several other test projects that just ended up getting tossed. Notably the chat bot, the blazor/wasm app, and some other tailored test things that just got scrapped.
 
 The final solution is quick and super cheap. I believe it's going to cost like 100 bucks a year or something including the storage. Obviously with more users, costs will scale somewhat as I am just hosting this on the free tier currently. Based on previous experience hosting some other internal apps on free tier, I don't expect that to be an issue but YMMV.
+
+_Edit: I noticed after publishing this, that I didn't actually have any pictures of the application itself, which seems kind of unhelpful since no one can log into it and actually see it since it's secured with all of the MS stuff, so I'm adding some below._
+
+If you try and login and you dont' have access, you get a blank screen and these messages in console.
+
+![image](https://user-images.githubusercontent.com/7390156/169864270-3bfde89a-c41e-42a3-a0df-0c4d0fa0411a.png)
+
+If you login, you get this:
+
+<img width="814" alt="image" src="https://user-images.githubusercontent.com/7390156/169865021-3cb228ee-84a8-41f3-b81e-635ad7c9f64e.png">
+
+Under preferences you can modify which fields you want to show in the search/home page as well as which you want to show in the results.
+
+When you search, it will return up to 15 results (normally this is a very targeted search and will only have a handful of documents) that looks like this:
+
+<img width="789" alt="image" src="https://user-images.githubusercontent.com/7390156/169865467-af319396-6010-4ee6-93ae-6b331b28de75.png">
+
+The label up top is the 'document type' name from doclink. You can select in preference which document properties you want to show in this window as well.
+
+It's very basic, but very functional. For the initial import I only went back to 2010 instead of as far back as I could go (2006) so the index was smaller, but still had over 9.3 million records. For all of my tests the search was sub 1 second, that's pretty good. You can game the system or create much more complex queries where you wildcard every field and it's slower, but I was always able to get a result even if it took a bit so not bad for nearly free. The system is also easily setup to have the UI modified, but I just ran out of time and done always wins out over not done. =)
