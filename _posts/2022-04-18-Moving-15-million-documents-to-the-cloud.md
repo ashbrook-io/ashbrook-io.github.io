@@ -646,3 +646,33 @@ Regardless, I am declaring this part 'done' and moving on. Done > Perfect, and I
 Next up, the indexing app. =)
 
 PS: I can't remember if I noted it up above, but also adding backups on all of these items in Azure is included. I am just doing 24 hour backups on cosmos (as we don't change this data ever) and maintaining the default daily type of backup policy on the sql pool for that copy. As mentioned, there is a copy of the original .bak file with the blob storage in archive mode for 'just in case one day' scenario and the blobs have soft deletes turned on. We also do have some tape backups of the data from past years offsite that we may maintain forever. It's unlikely those will come into play, but it will provide some reasonable assurance *if* we ever want to purge documents that are very old. Although blob storage is so cheap, it seems like better to just move everything that is super old into 'archive' status then just add a step in the logic to get the document that requires a ticket instead of allowing the user to get super old documents.
+
+Edit: I noticed later when I went back to re-import things that I did not list the powershell script I used to export the data to json files for import into cosmos. Adding that below. Originally I did this on a sql vm on azure that doesn't exist, but on my re-import I used a docker sql image, so you'd need to adjust accordingly. Below also assumes that you have a table with the id,k,v fields in place for export. Below I'm showing the dump of index data from 2010 and I am using the id value stored in the database for the id on the object instead of generating a guid on import.
+
+```
+# get data from sql
+Import-Module SqlServer -Cmdlet "Invoke-Sqlcmd"
+$cs = "Server=.;database=fuzzy;User ID=sa;Password=NdFe!Vtb;"
+$q = "select * from _2010 where exists (select 1 from documents where documentid = id and year(created)=2010)"
+$dt = Invoke-Sqlcmd -ConnectionString $cs -Query ($q)
+
+# group sql data on id
+$xg = $dt |
+  Select-Object $dt.Columns.ColumnName |
+  Group-Object id
+
+# convert to hash table
+$ht = foreach($g in $xg){
+  $values = @{}
+  $values["id"] = $g.name
+  foreach ($gv in $g.Group) {
+    $values["$($gv.k)"] = $gv.v
+  }
+  $values
+}
+
+#convert hash table to json file
+$ht |
+  ConvertTo-Json -Depth 4 -Compress |
+  Set-Content .\2010.json
+```
