@@ -574,3 +574,5 @@ When you search, it will return up to 15 results (normally this is a very target
 The label up top is the 'document type' name from doclink. You can select in preference which document properties you want to show in this window as well.
 
 It's very basic, but very functional. For the initial import I only went back to 2010 instead of as far back as I could go (2006) so the index was smaller, but still had over 9.3 million records. For all of my tests the search was sub 1 second, that's pretty good. You can game the system or create much more complex queries where you wildcard every field and it's slower, but I was always able to get a result even if it took a bit so not bad for nearly free. The system is also easily setup to have the UI modified, but I just ran out of time and done always wins out over not done. =)
+
+I also realizes that I didn't note the hosting. On the initial deploy, I'm using azure static sites, but it's just a static site so it could be deployed anywhere, the CORS rules just have to be updated appropriately everywhere.
