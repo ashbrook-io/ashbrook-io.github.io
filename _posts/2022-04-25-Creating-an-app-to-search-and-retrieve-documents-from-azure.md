@@ -1,10 +1,10 @@
 ---
 layout: post
-published: false
+published: true
 title: Creating an app to search and retrieve documents on Azure
 subtitle: >-
   Famous last words: This should be easy!
-date: '2022-04-25'
+date: '2022-05-23'
 ---
 
 After moving all of our documents and our index into the cloud (Azure), I needed to create a UI to search the index and retrieve the blobs. This is a sort of diary of my experience building one. This takes place right after migrating the data, but they are somewhat disconnected efforts, so I wanted to split up these two tasks from a narrative perspective. Moving the data and keeping it safe was also a very different level of 'acceptable' vs what I wanted to accomplish with the UI, as will become evident as I record my thoughts on the process, I think.
@@ -521,112 +521,36 @@ I was not able to figure out a way from the documentation to get *just* the one 
 
 ## Day 'The End', post-mortem, lessons learned, etc!
 
-In the end, I ended up:
+In the end, due to time constraints, I ended up:
 
+- Using the same SPA structure that I was already using in some additional projects
+  - This was the proof-of-concept setup, but it's going to be what's left in place for now
 - Using O365 sharepoint to store the secrets in a file
 - Using the same file/cache download method I was already using in some other projects
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-Create Azure Keyvault to hold the keys.
-
-![image](https://user-images.githubusercontent.com/7390156/165766740-bb6836e5-b708-4f01-a756-5b0e09c3c40c.png)
-
-Set it to use RBAC so we can only give specific users access
-
-![image](https://user-images.githubusercontent.com/7390156/165767001-6915a1ed-1a3e-4e93-be19-31c2a22563ef.png)
-
-deployed!
-
-![image](https://user-images.githubusercontent.com/7390156/165770114-af280c04-3d94-4a8b-a850-373d1ce00302.png)
-
-add myself as an owner to the vault:
-
-![image](https://user-images.githubusercontent.com/7390156/165770534-b20fe41b-78e9-4283-8c88-67e3896239cc.png)
-
-
-I had to wait a few minutes for my permissions to work, but then I created a secret
-
-![image](https://user-images.githubusercontent.com/7390156/165775656-ed364fc1-4172-4dc0-8bc5-32d5a924ffe8.png)
-
-
-![image](https://user-images.githubusercontent.com/7390156/165805760-122d3b5b-45e7-44d4-8b6e-23838a0c8778.png)
-
-
-![image](https://user-images.githubusercontent.com/7390156/165806062-ecef608c-9f2e-4852-81a4-f0c582c1f547.png)
-
-
-
-
-
-
-stub post copied below for editing. =)
-I got tired of copying/pasting while adding icons from [devicon.dev](https://devicon.dev/) to my GitHub profile page recently, so I created this little helper script so I could just click on the icons and it would generate some markup for me.
-
-{% gist 64a1333684c40b4d885fb6d353913266 %}
-
-### Some more history on this:
-Recently, I 'discovered' that I could add a README.md to my GitHub profile page. I'm quite late on this 'discovery' only coming across it when I went to [someone's profile page](https://github.com/dfinke) and they had a lot of cool things there.
-
-A handful of youtube videos later and I was ready to spin one up. I wanted to add some icons for the dev items and came across the [devicon.dev](https://devicon.dev/) site which had a ton of great icons I could include via CDN.
-
-This was cool, but since I wanted to simply add the img tag, I had to select an icon, go over to the left side, then copy and paste the img tag which wasn't really convenient setup to do this. See below for a dramatic recreation of this activity!
-
-![Animation](https://user-images.githubusercontent.com/7390156/146087974-f3345676-a611-43a0-af16-97fd2c8e11d3.gif)
-
-Maybe not so dramatic.. 
-
-Well... anyway, since I was fiddling around with formatting and things, I ended up going back and forth and back and forth while I figured out which icons I wanted to use, etc. After a bit, I decided that this was kind of a pain and I wished I could just click on the icons I wanted and copy and paste some markdown. So I put together the little js above and ran it in my browser console. It could be tweaked a lot, but as with all things like this, [it may not be worth it](https://xkcd.com/1205/).
-
-If i was passing these through a resizer, I'm guessing I could use normal image tags, but this setup seemed to be similar to what I found on some other profiles and kept all of them in a line, so that's what I went with. It's easy enough to tweak the line that outputs the markdown if needed.
-
-I actually ended up just kind of hand tweaking things on my file rather than using this too much, but it helped me while I was fiddling around and gave me a little entertainment, so maybe it'll help someone else! =)
-
-- [read more on the github docs](https://docs.github.com/en/account-and-profile/setting-up-and-managing-your-github-profile/customizing-your-profile/managing-your-profile-readme)
-- [great tool to automate this](https://github.com/rahuldkjain/github-profile-readme-generator) - A better way to do this!
-- [great article with a bunch of great tools to automate this](https://javascript.plainenglish.io/the-best-readme-generators-for-your-github-profile-ea4f50559d87)
-
+You can find this project template here:
+
+https://github.com/royashbrook/fuzzy-sniffle
+
+Basically throught this process I created the following projects:
+
+- https://github.com/royashbrook/stunning-bassoon
+  - A svelte based project template that represents the canned start for these types of projects for me currently
+- https://github.com/royashbrook/laughing-barnacle
+  - A variant of above project that addds in login to MS via MSAL.js and O365 integration via MSGraph
+  - This serves as the real start of these types of projects because this is has the login and the file retrieval
+  - Existing apps use this structure with agents that feed data to O365, then pull the data from there and essentially skin it
+- https://github.com/royashbrook/crispy-adventure
+  - Same as above, but pulls from a sharepoint list instead of a file
+- https://github.com/royashbrook/musical-tribble
+  - This is the output template project that connects all the dots
+  - This project logs in to ms, gets keys from o365
+  - Keys are used to search the index in cosmosdb, and then files are pulled from blob storage
+- https://github.com/royashbrook/fuzzy-sniffle
+  - This was the final implementation that contains the tailored version for 'production'
+  - This contains customizations for the index derived fromd doclink
+  - This also contains the tailored UI elements to make things easier, as well as the ability to save preferences to the browser
+
+There were several other test projects that just ended up getting tossed. Notably the chat bot, the blazor/wasm app, and some other tailored test things that just got scrapped.
+
+The final solution is quick and super cheap. I believe it's going to cost like 100 bucks a year or something including the storage. Obviously with more users, costs will scale somewhat as I am just hosting this on the free tier currently. Based on previous experience hosting some other internal apps on free tier, I don't expect that to be an issue but YMMV.
