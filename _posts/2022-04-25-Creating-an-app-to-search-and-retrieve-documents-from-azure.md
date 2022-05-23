@@ -4,7 +4,7 @@ published: true
 title: Creating an app to search and retrieve documents on Azure
 subtitle: >-
   Famous last words: This should be easy!
-date: '2022-05-23'
+date: '2022-05-20'
 ---
 
 After moving all of our documents and our index into the cloud (Azure), I needed to create a UI to search the index and retrieve the blobs. This is a sort of diary of my experience building one. This takes place right after migrating the data, but they are somewhat disconnected efforts, so I wanted to split up these two tasks from a narrative perspective. Moving the data and keeping it safe was also a very different level of 'acceptable' vs what I wanted to accomplish with the UI, as will become evident as I record my thoughts on the process, I think.
